@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DrawerLayout</title>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css" />
+  </head>
+
+  <body class="mdui-drawer-body-left">
+    <div class="mdui-appbar-with-toolbar mg-app">
+      <div class="mdui-appbar mdui-appbar-fixed">
+        <div class="toolbar mdui-toolbar">
+          <button class="drawer mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon material-icons">menu</i></button><a class="headline" href="/">狐说</a>
+          <div class="title">首页</div>
+          <div class="mdui-toolbar-spacer"></div>
+          <div class="search-icon mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons mdui-text-color-theme-icon">search</i></div>
+          <div class="login mdui-btn mdui-btn-dense">登录</div>
+          <div class="register mdui-btn mdui-btn-dense">注册</div>
+        </div>
+      </div>
+
+      <div class="mdui-drawer" id="drawer">
+        <h2>cebian</h2>
+      </div>
+    </div>
+
+    <div class="mdui-container">
+      <button id="open" class="mdui-btn mdui-color-pink-accent mdui-m-a-1">open</button>
+      <button id="close" class="mdui-btn mdui-color-pink-accent mdui-m-a-1">close</button>
+    </div>
+  </body>
+
+  <script src="//cdn.jsdelivr.net/npm/mdui@1.0.1/dist/js/mdui.min.js"></script>
+  <script>
+    var inst = new mdui.Drawer('#drawer')
+
+    // method
+
+    document.getElementById('open').addEventListener('click', function() {
+      inst.open()
+    })
+
+    document.getElementById('close').addEventListener('click', function() {
+      inst.close()
+    })
+  </script>
+</html>
