@@ -8,7 +8,15 @@
    # Global selectors
    # ================================================================= */
 @import './font.css';
-
+::-webkit-scrollbar 
+{ 
+  width: 5px; 
+}
+::-webkit-scrollbar-thumb 
+{ 
+  border-radius: 3px; 
+  background-color: rgba(0,0,0,0.2);
+} 
 html {
     box-sizing: border-box;
     -webkit-text-size-adjust: 100%; /* Prevent adjustments of font size after orientation changes in iOS */
