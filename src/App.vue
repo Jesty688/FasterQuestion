@@ -15,6 +15,7 @@
       class="content_top"
       app
       absolute
+      :permanent="showDrawer"
       v-model="drawer"
     >
       <v-list nav dense>
@@ -26,7 +27,7 @@
         >
           <v-subheader>题库相关</v-subheader>
           <!-- 练习类型下拉 -->
-          <v-list-group group="test" v-model="see" prepend-icon="mdi-school">
+          <v-list-group v-model="see" prepend-icon="mdi-school">
             <template v-slot:activator>
               <v-list-item-title>练习类型</v-list-item-title>
             </template>
@@ -118,7 +119,8 @@
 export default {
   data: () => ({
     see: 1,
-    drawer: false,
+    showDrawer: false,
+    drawer: true,
     drawerItem: 1,
     items: {
       subItems: [
@@ -142,15 +144,20 @@ export default {
     this.$refs.drawers.$el.style =
       this.$refs.drawers.$el.style.cssText + "position:fixed;";
     document.querySelector(".v-navigation-drawer__border").remove();
+    window.addEventListener("resize", () => {
+      console.log(document.body.clientWidth);
+      this.showDrawer = document.body.clientWidth < 1000 ? false : true;
+    });
   },
   methods: {
     changeGroupItem(index) {
       this.drawer = index != 0 ? !this.drawer : this.drawer;
-      console.log(index);
+      // console.log(index);
     },
     changeSubItem() {
+      // 没法合起来 bug
       this.drawer = !this.drawer;
-      console.log(11);
+      console.log(this.drawer);
     },
   },
   name: "App",
