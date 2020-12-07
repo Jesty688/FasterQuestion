@@ -26,7 +26,7 @@
         >
           <v-subheader>题库相关</v-subheader>
           <!-- 练习类型下拉 -->
-          <v-list-group v-model="see" prepend-icon="mdi-school">
+          <v-list-group group="test" v-model="see" prepend-icon="mdi-school">
             <template v-slot:activator>
               <v-list-item-title>练习类型</v-list-item-title>
             </template>
@@ -35,6 +35,7 @@
                 v-for="item in items.subItems"
                 :key="item.text"
                 class="item_padding"
+                href="/tog"
               >
                 <v-list-item-content>
                   <v-list-item-title v-text="item.text"></v-list-item-title>
@@ -43,7 +44,11 @@
             </v-list-item-group>
           </v-list-group>
           <!-- 单个组(习题部分)-->
-          <v-list-item v-for="item in items.prtItems" :key="item.text">
+          <v-list-item
+            v-for="item in items.prtItems"
+            :key="item.text"
+            :to="item.route"
+          >
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -55,7 +60,11 @@
           <!-- 个人信息部分 -->
           <v-divider class="dividermg"></v-divider>
           <v-subheader>个人信息</v-subheader>
-          <v-list-item v-for="item in items.userItem" :key="item.text">
+          <v-list-item
+            v-for="item in items.userItem"
+            :key="item.text"
+            :to="item.route"
+          >
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -100,6 +109,7 @@
           <li>11</li>
         </ul>
       </v-container>
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
@@ -112,19 +122,19 @@ export default {
     drawerItem: 1,
     items: {
       subItems: [
-        { text: "随机练习" },
-        { text: "顺序练习" },
-        { text: "模拟测试" },
+        { text: "随机练习", route: "/sj" },
+        { text: "顺序练习", route: "/sx" },
+        { text: "模拟测试", route: "/mn" },
       ],
       prtItems: [
-        { text: "收藏题目", icon: "mdi-tag-heart" },
-        { text: "错题集合", icon: "mdi-flag-variant" },
-        { text: "答题排行", icon: "mdi-summit" },
+        { text: "收藏题目", icon: "mdi-tag-heart", route: "/collecet" },
+        { text: "错题集合", icon: "mdi-flag-variant", route: "/errclt" },
+        { text: "答题排行", icon: "mdi-summit", route: "/ansrank" },
       ],
       userItem: [
         // earth earth-arrow-right police-badge police-badge-outline
-        { text: "个人资料", icon: "mdi-account" },
-        { text: "人脉", icon: "mdi-account-multiple" },
+        { text: "个人资料", icon: "mdi-account", route: "/users" },
+        { text: "人脉", icon: "mdi-account-multiple", route: "/usersm" },
       ],
     },
   }),
