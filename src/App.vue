@@ -17,7 +17,55 @@
       absolute
       v-model="drawer"
     >
-      <v-list nav dense> 213 </v-list>
+      <v-list nav dense>
+        <v-list-item-group
+          @change="changeGroupItem($event)"
+          v-model="drawerItem"
+          color="primary"
+          mandatory
+        >
+          <v-subheader>题库相关</v-subheader>
+          <!-- 练习类型下拉 -->
+          <v-list-group v-model="see" prepend-icon="mdi-school">
+            <template v-slot:activator>
+              <v-list-item-title>练习类型</v-list-item-title>
+            </template>
+            <v-list-item-group @change="changeSubItem" mandatory>
+              <v-list-item
+                v-for="item in items.subItems"
+                :key="item.text"
+                class="item_padding"
+              >
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list-group>
+          <!-- 单个组(习题部分)-->
+          <v-list-item v-for="item in items.prtItems" :key="item.text">
+            <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <!-- 单个组End-->
+          <!-- 个人信息部分 -->
+          <v-divider class="dividermg"></v-divider>
+          <v-subheader>个人信息</v-subheader>
+          <v-list-item v-for="item in items.userItem" :key="item.text">
+            <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <!-- 个人信息结束 -->
+        </v-list-item-group>
+      </v-list>
     </v-navigation-drawer>
 
     <v-main class="content_top">
@@ -46,74 +94,39 @@
             <v-btn outlined rounded text> Button </v-btn>
           </v-card-actions>
         </v-card>
-        <h1>12312ssss2313123123123312</h1>
-        <div>123ccccsfdsjflksjfskjflksj</div>
+        <h1>主体内容</h1>
+        <div>很多子</div>
         <ul>
           <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>11</li>
-          <li>11</li>
-          <li>11</li>
-          v
-          <li>1231211</li>
-          <li>123123</li>
-          <li>12312</li>
-          <li>11</li>
-          <li>123</li>
-          v
-          <li>123</li>
-          <li>11</li>
-          <li>11</li>
-          v v
         </ul>
       </v-container>
     </v-main>
   </v-app>
 </template>
 <script>
+// 简单架构 => 框架成形 => 单独文件 => 自定义组件 => 导入应用 => 代码简单美化
 export default {
   data: () => ({
+    see: 1,
     drawer: false,
-    selectedItem: 0,
-    items: [
-      { text: "随机练习", icon: "mdi-folder" },
-      { text: "顺序练习", icon: "mdi-account-multiple" },
-      { text: "模拟测试", icon: "mdi-star" },
-    ],
+    drawerItem: 1,
+    items: {
+      subItems: [
+        { text: "随机练习" },
+        { text: "顺序练习" },
+        { text: "模拟测试" },
+      ],
+      prtItems: [
+        { text: "收藏题目", icon: "mdi-tag-heart" },
+        { text: "错题集合", icon: "mdi-flag-variant" },
+        { text: "答题排行", icon: "mdi-summit" },
+      ],
+      userItem: [
+        // earth earth-arrow-right police-badge police-badge-outline
+        { text: "个人资料", icon: "mdi-account" },
+        { text: "人脉", icon: "mdi-account-multiple" },
+      ],
+    },
   }),
   mounted() {
     this.$refs.drawers.$el.style =
@@ -121,8 +134,13 @@ export default {
     document.querySelector(".v-navigation-drawer__border").remove();
   },
   methods: {
-    changeItem() {
-      this.selectedItem = this.selectedItem ? this.selectedItem : 0;
+    changeGroupItem(index) {
+      this.drawer = index != 0 ? !this.drawer : this.drawer;
+      console.log(index);
+    },
+    changeSubItem() {
+      this.drawer = !this.drawer;
+      console.log(11);
     },
   },
   name: "App",
@@ -130,6 +148,12 @@ export default {
 </script>
 <style scoped>
 @import "assets/css/reset.css";
+.dividermg {
+  margin: 8px 0;
+}
+.item_padding {
+  padding-left: 72px !important;
+}
 .elevation {
   box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28) !important;
 }
