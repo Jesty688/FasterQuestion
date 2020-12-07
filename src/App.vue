@@ -35,7 +35,7 @@
                 v-for="item in items.subItems"
                 :key="item.text"
                 class="item_padding"
-                href="/tog"
+                :to="item.route"
               >
                 <v-list-item-content>
                   <v-list-item-title v-text="item.text"></v-list-item-title>
