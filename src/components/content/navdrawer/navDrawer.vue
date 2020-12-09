@@ -16,7 +16,11 @@
       >
         <v-subheader>题库相关</v-subheader>
         <!-- 练习类型下拉 -->
-        <v-list-group v-model="drawerItem" prepend-icon="mdi-school">
+        <!-- prepend-icon="mdi-school" -->
+        <v-list-group v-model="drawerItem">
+          <template v-slot:prependIcon>
+            <v-icon dense>mdi-school</v-icon>
+          </template>
           <template v-slot:activator>
             <v-list-item-title>练习类型</v-list-item-title>
           </template>
@@ -40,7 +44,7 @@
           :to="item.route"
         >
           <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
+            <v-icon dense v-text="item.icon"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title v-text="item.text"></v-list-item-title>
@@ -57,7 +61,7 @@
           v-show="item.isShow"
         >
           <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
+            <v-icon dense v-text="item.icon"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title v-text="item.text"></v-list-item-title>
@@ -118,8 +122,10 @@ export default {
     eventBus.$on("tigger", () => {
       eventBus.$emit("ctltigger", this);
     });
-    this.$refs.drawers.$el.style =
-      this.$refs.drawers.$el.style.cssText + "position:fixed;";
+    //侧滑栏固定 不随着主页面下拉而下拉
+    let fixeds = this.$refs.drawers.$el.style.cssText + "position:fixed;";
+    this.$refs.drawers.$el.style = fixeds;
+    //隐藏侧滑最右边的小细线
     document.querySelector(".v-navigation-drawer__border").remove();
   },
   methods: {

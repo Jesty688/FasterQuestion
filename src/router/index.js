@@ -10,10 +10,33 @@ VueRouter.prototype.push = function(location){
 VueRouter.prototype.replace = function(location){
     VueRouterReplace.call(this , location).catch(err => err)
 }
-const routes = [];
+/**
+ * routes一组路由
+ * route单个路由 this.$route.params
+ * router vue中注册路由
+ */
+// 组件懒加载
+const Rand = () => import('views/test/rand')
+const routes = [
+    {
+        path:'/',
+        redirect:'/rand'
+    },
+    {
+        path:'/rand',
+        component:Rand,
+        name:'rand'
+    },
+    {
+        path:'/order',
+        name:'order',
+        // component:1
+
+    }
+];
 
 
 export default new VueRouter({
-    mode:'history',
-    routes
+    mode:'history', //地址栏无#
+    routes          //初始化路由条目
 })
