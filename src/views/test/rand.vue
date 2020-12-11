@@ -21,15 +21,45 @@
           </v-chip></v-col
         >
       </v-row>
-      <v-card-title class="body-1 d-block wrapmore">
+      <!-- <v-card-title class="body-1 d-block wrapmore">
         1.Android操作系统手机，如何使用PC机给手机安装软件
-        <v-btn v-if="moreBtn" icon @click="showMore = !showMore"
-          ><v-icon>{{
-            showMore ? "mdi-chevron-up" : "mdi-chevron-down"
-          }}</v-icon></v-btn
-        >
-      </v-card-title>
-      <v-card-text>123</v-card-text>
+      </v-card-title> -->
+      <v-list nav dense>
+        <v-list-item ripple @click="showMoreQs">
+          <v-list-item-content>
+            <span class="wrapmore body-1">
+              1.Android操作系统手机，如何使用PC机给手机安装软件
+            </span>
+          </v-list-item-content>
+          <v-icon>{{ showIcon }}</v-icon>
+        </v-list-item>
+      </v-list>
+
+      <!-- 显示更改主题 -->
+      <v-expand-transition>
+        <div v-if="showMore">
+          <v-card-text class="px-4 py-1"
+            >这里是很多字的内容内容内容内容内容内容内容内容</v-card-text
+          >
+          <v-divider class="mx-5"></v-divider>
+        </div>
+      </v-expand-transition>
+      <!-- 选项卡 -->
+      <v-card-text>
+        <div class="itemKey">
+          <div v-for="(item, index) in itemAs" :key="index">
+            <!-- <div class="d-inline-flex sets"></div> -->
+            <v-checkbox
+              ref="inputs"
+              @click="selAns(index)"
+              :label="item.ans"
+              :value="index"
+            >
+              <div slot="prepend" class="sets"></div>
+            </v-checkbox>
+          </div>
+        </div>
+      </v-card-text>
     </v-card>
   </v-container>
 </template>
@@ -40,24 +70,29 @@ export default {
     return {
       showMore: false,
       moreBtn: false,
+      itemAs: [
+        { option: "A", ans: "测试A选项正确答案" },
+        { option: "B", ans: "测试B选项正确答案" },
+        { option: "C", ans: "测试C选项正确答案" },
+        { option: "D", ans: "测试D选项正确答案" },
+      ],
     };
   },
   mounted() {
-    window.addEventListener("resize", () => {
-      let cardWidth = document.querySelector(".gw").offsetWidth;
-      let questionDom = document.querySelector(".wrapmore");
-      // let res =
-      //   questionDom.offsetWidth + 28 + 36 > cardWidth ? "显示更多" : "正常视图";
-      console.log(questionDom.ScrollWidth, questionDom.OuterWidth);
-
-      // console.log(res);
-
-      // console.log(
-      //   document.querySelector(".wrapmore").offsetWidth + 28 + 36 > cardWidth
-      //     ? "显示更多按钮" + document.querySelector(".wrapmore").offsetWidth
-      //     : "没事了" + document.querySelector(".wrapmore").offsetWidth
-      // );
-    });
+    console.log(this.$refs.inputs[0].$el);
+  },
+  methods: {
+    showMoreQs() {
+      this.showMore = !this.showMore;
+    },
+    selAns(index) {
+      console.log(index);
+    },
+  },
+  computed: {
+    showIcon() {
+      return this.showMore ? "mdi-chevron-up" : "mdi-chevron-down";
+    },
   },
 };
 </script>
@@ -81,6 +116,16 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  user-select: none;
   /* border: solid 1px red; */
+}
+.sets {
+  width: 4px;
+  height: 24px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: #ccc;
 }
 </style>
