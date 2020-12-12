@@ -4,7 +4,9 @@
     <jst-drawer></jst-drawer>
     <v-main class="content_top">
       <v-container>
-        <router-view></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </v-container>
     </v-main>
   </v-app>

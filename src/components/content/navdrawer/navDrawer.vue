@@ -123,7 +123,8 @@ export default {
       eventBus.$emit("ctltigger", this);
     });
     //侧滑栏固定 不随着主页面下拉而下拉
-    let fixeds = this.$refs.drawers.$el.style.cssText + "position:fixed;";
+    let fixeds =
+      this.$refs.drawers.$el.style.cssText + "position:fixed; z-index:2";
     this.$refs.drawers.$el.style = fixeds;
     //隐藏侧滑最右边的小细线
     document.querySelector(".v-navigation-drawer__border").remove();
