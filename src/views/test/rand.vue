@@ -6,7 +6,9 @@
       <h2>Hello,</h2>
       <h2>Suchs Jesty.👋</h2>
     </div>
+    <!-- 答题选项卡片 -->
     <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 my-4">
+      <!-- 答题进度 -->
       <v-row class="d-flex flex-column ma-0">
         <v-col>
           <v-chip class="alphabgc">
@@ -42,10 +44,7 @@
           </v-chip>
         </v-col>
       </v-row>
-      <!-- <v-card-title class="body-1 d-block wrapmore">
-        1.Android操作系统手机，如何使用PC机给手机安装软件
-      </v-card-title> -->
-
+      <!-- 显示题目/文字溢出点击显示更多 -->
       <v-list nav dense>
         <v-list-item ripple @click="showMoreQs">
           <v-list-item-content>
@@ -56,8 +55,7 @@
           <v-icon>{{ showIcon }}</v-icon>
         </v-list-item>
       </v-list>
-
-      <!-- 显示更多内容 -->
+      <!-- 显示更多内容(对应上面) -->
       <v-expand-transition>
         <div v-if="showMore">
           <v-card-text class="px-4 py-1"
@@ -66,7 +64,7 @@
           <v-divider class="mx-5"></v-divider>
         </div>
       </v-expand-transition>
-      <!-- 选项卡 -->
+      <!-- 答案选项卡 -->
       <v-card-text class="py-0">
         <div class="itemKey">
           <v-radio-group v-model="selectedIndex" class="mt-0 pt-0">
@@ -89,6 +87,7 @@
           </v-radio-group>
         </div>
       </v-card-text>
+      <!-- 查看正确答案 / 解析 / 提交个人解析 -->
       <v-expansion-panels flat popout>
         <v-expansion-panel>
           <v-expansion-panel-header expand-icon="mdi-eye"
@@ -139,7 +138,7 @@
         class="pa-2 ma-1 rounded-sm"
         tile
         depressed
-        icon
+        iconw
       >
         {{ n }}
       </v-btn>
