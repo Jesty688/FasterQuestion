@@ -1,6 +1,36 @@
 <!-- 随机练习 -->
 <template>
   <v-container class="main_rand">
+    <!-- 显示答题进度对话框 -->
+    <v-dialog
+      v-model="doneDialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card tile>
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="doneDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>已做题目</v-toolbar-title>
+        </v-toolbar>
+        <v-divider></v-divider>
+        <div class="d-flex flex-row flex-wrap justify-space-around pa-2">
+          <v-btn
+            @click="listQs(n)"
+            class="ma-1"
+            :class="n == 12 || n == 77 ? 'bgs' : ''"
+            v-for="n in 100"
+            :key="n"
+            elevation="0"
+            color="#fff"
+            style="border: 1px solid grey; font-weight: normal; color: grey"
+            >{{ n }}</v-btn
+          >
+        </div>
+      </v-card>
+    </v-dialog>
     <!-- 顶部提示 -->
     <div class="font_color">
       <h2>Hello,</h2>
@@ -17,12 +47,37 @@
           </v-chip>
         </v-col>
         <v-col>
-          <v-chip class="alphabgc">
+          <v-chip
+            v-ripple="{ class: 'grey--text' }"
+            @click="doneQs"
+            class="alphabgc"
+          >
             <v-icon left color="#00c58e"> mdi-routes </v-icon>
             已完成 1 / 123
-          </v-chip></v-col
-        >
-        <v-col>
+          </v-chip>
+          <v-text-field
+            append-icon="mdi-arrow-right"
+            class="d-inline-flex ml-4"
+            label="跳转题号"
+            @click:append="gotoQs"
+            style="max-width: 35%"
+          ></v-text-field>
+        </v-col>
+        <!-- 时间条 -->
+        <v-col class="mt-n3">
+          <v-btn block text color="primary" class="mb-1">
+            <v-icon left> mdi-alarm </v-icon>123:23</v-btn
+          >
+          <v-progress-linear
+            color="primary"
+            buffer-value="0"
+            value="20"
+            rounded
+            striped
+            stream
+          ></v-progress-linear>
+        </v-col>
+        <v-col class="d-flex">
           <v-chip
             style="color: #2f495e"
             color="#edf2f7"
@@ -42,6 +97,16 @@
             <v-icon small left color="#fff"> mdi-arrow-right </v-icon>
             下一题
           </v-chip>
+          <v-chip
+            style="color: #fff"
+            color="primary"
+            @click="submitAs"
+            class="ml-auto"
+            v-ripple="{ class: 'white--text' }"
+          >
+            <v-icon small left color="#fff"> mdi-check </v-icon>
+            提交
+          </v-chip>
         </v-col>
       </v-row>
       <!-- 显示题目/文字溢出点击显示更多 -->
@@ -59,7 +124,7 @@
       <v-expand-transition>
         <div v-if="showMore">
           <v-card-text class="px-4 py-1"
-            >这里是很多字的内容内容内容内容内容内容内容内容</v-card-text
+            >Android操作系统手机，如何使用PC机给手机安装软件</v-card-text
           >
           <v-divider class="mx-5"></v-divider>
         </div>
@@ -119,29 +184,14 @@
                 <v-icon small>mdi-thumb-up</v-icon>
               </v-btn>
             </v-badge>
-            <v-badge color="error" content="12" top offset-y="15" offset-x="15">
-              <v-btn class="ma-1" outlined fab color="error" x-small>
+            <v-badge color="grey" content="12" top offset-y="15" offset-x="15">
+              <v-btn class="ma-1" outlined fab color="grey" x-small>
                 <v-icon small>mdi-thumb-down</v-icon>
               </v-btn>
             </v-badge>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-    </v-card>
-
-    <!-- 所有题目列表 -->
-    <v-card outlined class="d-flex flex-wrap">
-      <v-btn
-        style="border: 1px solid #ccc"
-        v-for="n in 111"
-        :key="n"
-        class="pa-2 ma-1 rounded-sm"
-        tile
-        depressed
-        iconw
-      >
-        {{ n }}
-      </v-btn>
     </v-card>
   </v-container>
 </template>
@@ -150,6 +200,7 @@
 export default {
   data() {
     return {
+      doneDialog: false,
       showMore: false,
       itemAs: [
         { option: "A", ans: "测试A选项正确答案" },
@@ -163,6 +214,21 @@ export default {
   },
   mounted() {},
   methods: {
+    // 题号跳转
+    gotoQs() {
+      console.log(123);
+    },
+    //已做题目
+    doneQs() {
+      this.doneDialog = true;
+    },
+    // 点击已做题目
+    listQs(index) {
+      console.log(index);
+      this.doneDialog = false;
+    },
+    // 提交答案
+    submitAs() {},
     showMoreQs() {
       this.showMore = !this.showMore;
     },
@@ -182,6 +248,11 @@ export default {
 };
 </script>
 <style scoped>
+.bgs {
+  background-color: #00c58e !important;
+  color: #fff !important;
+  border: 1px solid #00c58e !important;
+}
 .main_rand {
   height: 100%;
 }
