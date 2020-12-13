@@ -66,7 +66,7 @@
         <!-- 时间条 -->
         <v-col class="mt-n3">
           <v-btn block text color="primary" class="mb-1">
-            <v-icon left> mdi-alarm </v-icon>123:23</v-btn
+            <v-icon left> mdi-alarm </v-icon>116:45</v-btn
           >
           <v-progress-linear
             color="primary"
