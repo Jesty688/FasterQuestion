@@ -11,12 +11,14 @@ VueRouter.prototype.replace = function(location){
     VueRouterReplace.call(this , location).catch(err => err)
 }
 /**
- * routes一组路由
- * route单个路由 this.$route.params
+ * routes  一组路由
+ * route  单个路由 this.$route.params
  * router vue中注册路由
  */
+
 // 组件懒加载
 const Rand = () => import('views/test/rand')
+const Test = () => import('views/test/test')
 const routes = [
     {
         path:'/',
@@ -28,9 +30,9 @@ const routes = [
         name:'rand'
     },
     {
-        path:'/order',
-        name:'order',
-        // component:1
+        path:'/test',
+        name:'test',
+        component:Test
 
     }
 ];

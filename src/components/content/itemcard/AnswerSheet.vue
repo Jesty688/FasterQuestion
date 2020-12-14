@@ -1,16 +1,17 @@
-<!-- 随机练习 -->
 <template>
-  <v-container class="main_rand">
+  <div>
     <!-- 显示答题进度对话框 -->
     <v-dialog
-      v-model="doneDialog"
+      v-model="dialog"
       fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
     >
       <v-card tile>
         <v-toolbar dark color="primary">
-          <v-btn icon dark @click="doneDialog = false">
+          <!-- @click="showDialog = false" -->
+          <!-- 这里之所以可以这样写是在父组件中使用了sync修饰 其实也是等于我上面的写法 只不过这是vue提供的语法糖 -->
+          <v-btn icon dark @click="closeDialog">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>已做题目</v-toolbar-title>
@@ -31,21 +32,6 @@
         </div>
       </v-card>
     </v-dialog>
-    <!-- 顶部提示 -->
-    <div class="font_color">
-      <h2>Hello,</h2>
-      <h2>Suchs Jesty.👋</h2>
-    </div>
-    <!-- 题型选择 -->
-    <v-col class="d-flex pa-0" cols="12" sm="2">
-      <v-select
-        :items="['Java', 'C++', '计算机基础']"
-        label="题型选择"
-        append-icon="mdi-shape"
-        menu-props="auto, overflowX"
-      ></v-select>
-    </v-col>
-
     <!-- 答题选项卡片 -->
     <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 mb-4">
       <!-- 答题进度 -->
@@ -69,19 +55,22 @@
             append-icon="mdi-arrow-right"
             class="d-inline-flex ml-4"
             label="跳转题号"
+            :error="qsInputs.errStatus"
+            :error-messages="qsInputs.errMsg"
+            v-model="qsInputs.qsValue"
             @click:append="gotoQs"
             style="max-width: 35%"
           ></v-text-field>
         </v-col>
         <!-- 时间条 -->
         <v-col class="mt-n3">
-          <v-btn block text color="primary" class="mb-1">
-            <v-icon left> mdi-alarm </v-icon>116:45</v-btn
+          <v-btn block text color="primary" class="mb-1" @click="startAs">
+            <v-icon left> mdi-alarm </v-icon>{{ showHaveTime }}</v-btn
           >
           <v-progress-linear
             color="primary"
-            buffer-value="0"
-            value="20"
+            :buffer-value="ansTime.progressValue"
+            :value="ansTime.progressValue"
             rounded
             striped
             stream
@@ -163,7 +152,7 @@
         </div>
       </v-card-text>
       <!-- 查看正确答案 / 解析 / 提交个人解析 -->
-      <v-expansion-panels flat popout>
+      <v-expansion-panels v-if="showAns" flat popout>
         <v-expansion-panel>
           <v-expansion-panel-header expand-icon="mdi-eye"
             >查看答案:</v-expansion-panel-header
@@ -203,44 +192,114 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </v-card>
-  </v-container>
+  </div>
 </template>
-
 <script>
 export default {
+  name: "AnswerSheet",
   data() {
     return {
-      doneDialog: false,
+      // 定义题目跳转对象
+      qsInputs: {
+        qsValue: "",
+        errStatus: false,
+        errMsg: "",
+      },
+      //   控制时间进度条显示进度
+      ansTime: {
+        time: null,
+        progressValue: 0,
+        isStart: false,
+      },
+
       showMore: false,
-      itemAs: [
-        { option: "A", ans: "测试A选项正确答案" },
-        { option: "B", ans: "测试B选项正确答案" },
-        { option: "C", ans: "测试C选项正确答案" },
-        { option: "D", ans: "测试D选项正确答案" },
-      ],
+      itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
       selectedIndex: 0, //默认选中项
       selectedItems: [],
     };
   },
-  mounted() {},
-  methods: {
-    // 题号跳转
-    gotoQs() {
-      console.log(123);
+  mounted() {
+    // let ts = setInterval(() => {
+    //   this.progressValue >= 100
+    //     ? (clearInterval(ts), console.log("清除定时器 并执行交卷操作"))
+    //     : (this.progressValue += 1);
+    // }, 50);
+  },
+  //  接受父组件传的参数
+  props: {
+    // 接收 是否显示查看已完成题目对话框
+    dialog: {
+      type: Boolean,
+      default: false,
     },
-    //已做题目
+    // 接收 是否显示答案区域
+    showAns: {
+      type: Boolean,
+      default: true,
+    },
+    // 接收 显示答题时间
+    times: {
+      type: Number,
+      default: 120, //分钟为单位
+    },
+  },
+  methods: {
+    /**
+     * sync子组件修改父组件数据
+     */
+    closeDialog() {
+      this.$emit("update:dialog", false);
+    },
+    //查看已做题目
     doneQs() {
-      this.doneDialog = true;
+      this.$emit("update:dialog", true);
     },
     // 点击已做题目
     listQs(index) {
       console.log(index);
-      this.doneDialog = false;
+      this.$emit("update:dialog", false);
+    },
+    // 题目跳转
+    gotoQs() {
+      /**
+       *  简单判断是不是数字
+       *  console.log(!isNaN(parseInt(this.qsInputs.qsValue))); 这样写有bug
+       *  parseInt会把非数字的舍去  如111a 结果是111 但是a111结果是NaN 小细节
+       */
+      !isNaN(Number(this.qsInputs.qsValue))
+        ? ((this.qsInputs.errStatus = false),
+          (this.qsInputs.errMsg = ""),
+          (this.qsInputs.qsValue = "")) //跳转后清空输入框
+        : ((this.qsInputs.errStatus = true),
+          (this.qsInputs.errMsg = "只能是数字!"));
+      //   console.log(!isNaN(Number(this.qsInputs.qsValue)));
+    },
+    // 开始答题
+    startAs() {
+      //防抖(多次点击)
+      if (!this.isStart) {
+        let time = 1;
+        let sec = 60;
+        this.isStart = true; //开始计时
+        console.log("计时已经开始了 ");
+        let ts = setInterval((_) => {
+          time >= 0
+            ? sec > 0
+              ? sec--
+              : --time >= 0
+              ? (sec = 60)
+              : (++time, clearInterval(ts))
+            : clearInterval(ts);
+          console.log(time < 10 ? "0" + time : time, +sec);
+        }, 15);
+      } else {
+        console.log("计时已经开始了 无法重复点击");
+      }
     },
     // 提交答案
     submitAs() {},
     showMoreQs() {
-      this.showMore = !this.showMore;
+      this.showMores = !this.showMore;
     },
     selAns(index) {
       console.log(this.selectedIndex);
@@ -248,6 +307,13 @@ export default {
     personalIdeas() {},
   },
   computed: {
+    showHaveTime() {
+      // 初始化值
+      this.ansTime.time =
+        this.ansTime.time === null ? this.times : this.ansTime.time;
+
+      return "点击开始";
+    },
     showIcon() {
       return this.showMore ? "mdi-chevron-up" : "mdi-chevron-down";
     },
@@ -263,16 +329,7 @@ export default {
   color: #fff !important;
   border: 1px solid #00c58e !important;
 }
-.main_rand {
-  height: 100%;
-}
-.main_rand > * {
-  font-family: "Menlo", "PingFang" !important;
-}
-.font_color {
-  margin-bottom: 12px;
-  color: #6190e8;
-}
+
 .alphabgc {
   user-select: none;
   /* background-color: rgba(0, 0, 0, 0.05) !important;  */

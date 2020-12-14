@@ -84,7 +84,7 @@ export default {
       items: {
         subItems: [
           { text: "随机练习", route: "/rand" },
-          { text: "顺序练习", route: "/order" },
+          // { text: "顺序练习", route: "/order" },
           { text: "模拟测试", route: "/test" },
         ],
         prtItems: [

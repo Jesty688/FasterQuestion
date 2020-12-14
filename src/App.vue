@@ -1,9 +1,12 @@
 <template>
   <v-app>
+    <!-- 顶栏 -->
     <jst-app-bar></jst-app-bar>
+    <!-- 侧边栏 -->
     <jst-drawer></jst-drawer>
     <v-main class="content_top">
       <v-container>
+        <!-- 主页面 -->
         <keep-alive>
           <router-view></router-view>
         </keep-alive>
