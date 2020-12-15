@@ -86,11 +86,12 @@
             stream
           ></v-progress-linear>
         </v-col>
+        <!-- 题目上下选择 -->
         <v-col class="d-flex">
           <v-chip
             style="color: #2f495e"
             color="#edf2f7"
-            @click="personalIdeas"
+            @click="prevQs"
             class="mr-4"
             v-ripple="{ class: 'white--text' }"
           >
@@ -100,7 +101,7 @@
           <v-chip
             style="color: #fff"
             color="#00e0a1"
-            @click="personalIdeas"
+            @click="nextQs"
             v-ripple="{ class: 'white--text' }"
           >
             <v-icon small left color="#fff"> mdi-arrow-right </v-icon>
@@ -209,6 +210,7 @@ export default {
   name: "AnswerSheet",
   data() {
     return {
+      // 交卷提示
       snackMsg: {
         submitPaper: false,
         submitMsg: "",
@@ -229,8 +231,9 @@ export default {
 
       showMore: false,
       itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
-      selectedIndex: 0, //默认选中项
-      selectedItems: [],
+      selectedIndex: undefined, //答案选项默认选中项
+      currentIndex: 1, //默认题目显示第一题
+      doneItems: [], //以完成题目
     };
   },
   mounted() {
@@ -284,7 +287,8 @@ export default {
       !isNaN(Number(this.qsInputs.qsValue)) && this.qsInputs.qsValue.length != 0
         ? ((this.qsInputs.errStatus = false),
           (this.qsInputs.errMsg = ""),
-          (this.qsInputs.qsValue = "")) //跳转后清空输入框
+          (this.qsInputs.qsValue = ""),
+          (this.currentIndex = this.qsInputs.qsValue)) //跳转后清空输入框
         : ((this.qsInputs.errStatus = true),
           (this.qsInputs.errMsg = "输入不能为空/只能是数字!"));
       //   console.log(!isNaN(Number(this.qsInputs.qsValue)));
@@ -298,8 +302,7 @@ export default {
         this.ansTime.isStart = true; //开始计时
         console.log("答题开始");
         let ts = setInterval((_) => {
-          console.log(this.ansTime.time);
-
+          //console.log(this.ansTime.time);
           if (this.ansTime.time >= 0) {
             if (this.ansTime.sec > 0) {
               this.ansTime.sec--;
@@ -322,14 +325,24 @@ export default {
         console.log("无法重复点击");
       }
     },
-    // 提交答案
-    submitAs() {},
+    // 题目溢出 点击显示更多
     showMoreQs() {
       this.showMores = !this.showMore;
     },
+    // 已做题目列表
     selAns(index) {
       console.log(this.selectedIndex);
     },
+    // 上一题
+    prevQs() {
+      this.currentIndex = this.currentIndex - 1;
+    },
+    //下一题
+    nextQs() {
+      this.currentIndex = this.currentIndex + 1;
+    },
+    // 提交答案
+    submitAs() {},
     personalIdeas() {},
     showHavaTimes(count) {
       this.ansTime.progressValue = Math.ceil(count);
