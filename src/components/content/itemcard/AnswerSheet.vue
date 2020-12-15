@@ -32,6 +32,16 @@
         </div>
       </v-card>
     </v-dialog>
+    <!-- 交卷提示 -->
+    <v-snackbar
+      color="#1A73E8"
+      top
+      elevation="6"
+      rounded
+      v-model="snackMsg.submitPaper"
+    >
+      {{ snackMsg.submitMsg }}
+    </v-snackbar>
     <!-- 答题选项卡片 -->
     <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 mb-4">
       <!-- 答题进度 -->
@@ -199,6 +209,10 @@ export default {
   name: "AnswerSheet",
   data() {
     return {
+      snackMsg: {
+        submitPaper: false,
+        submitMsg: "",
+      },
       // 定义题目跳转对象
       qsInputs: {
         qsValue: "",
@@ -207,6 +221,7 @@ export default {
       },
       //   控制时间进度条显示进度
       ansTime: {
+        sec: 59,
         time: null,
         progressValue: 0,
         isStart: false,
@@ -240,7 +255,7 @@ export default {
     // 接收 显示答题时间
     times: {
       type: Number,
-      default: 120, //分钟为单位
+      default: 10, //分钟为单位
     },
   },
   methods: {
@@ -266,34 +281,45 @@ export default {
        *  console.log(!isNaN(parseInt(this.qsInputs.qsValue))); 这样写有bug
        *  parseInt会把非数字的舍去  如111a 结果是111 但是a111结果是NaN 小细节
        */
-      !isNaN(Number(this.qsInputs.qsValue))
+      !isNaN(Number(this.qsInputs.qsValue)) && this.qsInputs.qsValue.length != 0
         ? ((this.qsInputs.errStatus = false),
           (this.qsInputs.errMsg = ""),
           (this.qsInputs.qsValue = "")) //跳转后清空输入框
         : ((this.qsInputs.errStatus = true),
-          (this.qsInputs.errMsg = "只能是数字!"));
+          (this.qsInputs.errMsg = "输入不能为空/只能是数字!"));
       //   console.log(!isNaN(Number(this.qsInputs.qsValue)));
     },
     // 开始答题
     startAs() {
       //防抖(多次点击)
-      if (!this.isStart) {
-        let time = 1;
-        let sec = 60;
-        this.isStart = true; //开始计时
-        console.log("计时已经开始了 ");
+      let interval = parseFloat((100 / this.ansTime.time).toFixed(2));
+      let count = interval;
+      if (!this.ansTime.isStart) {
+        this.ansTime.isStart = true; //开始计时
+        console.log("答题开始");
         let ts = setInterval((_) => {
-          time >= 0
-            ? sec > 0
-              ? sec--
-              : --time >= 0
-              ? (sec = 60)
-              : (++time, clearInterval(ts))
-            : clearInterval(ts);
-          console.log(time < 10 ? "0" + time : time, +sec);
-        }, 15);
+          console.log(this.ansTime.time);
+
+          if (this.ansTime.time >= 0) {
+            if (this.ansTime.sec > 0) {
+              this.ansTime.sec--;
+            } else {
+              if (this.ansTime.time - 1 >= 0) {
+                this.ansTime.sec = 59;
+                --this.ansTime.time;
+                this.showHavaTimes(count);
+                count += interval;
+              } else {
+                console.log("结束了!");
+                this.snackMsg.submitPaper = true;
+                this.snackMsg.submitMsg = "时间到!即将交卷";
+                clearInterval(ts);
+              }
+            }
+          }
+        }, 10);
       } else {
-        console.log("计时已经开始了 无法重复点击");
+        console.log("无法重复点击");
       }
     },
     // 提交答案
@@ -305,14 +331,27 @@ export default {
       console.log(this.selectedIndex);
     },
     personalIdeas() {},
+    showHavaTimes(count) {
+      this.ansTime.progressValue = Math.ceil(count);
+      // console.log("计时变量:" + this.ansTime.progressValue);
+      return this.showHaveTime;
+    },
   },
   computed: {
-    showHaveTime() {
-      // 初始化值
-      this.ansTime.time =
-        this.ansTime.time === null ? this.times : this.ansTime.time;
-
-      return "点击开始";
+    showHaveTime: {
+      get() {
+        // 初始化值
+        this.ansTime.time =
+          this.ansTime.time === null ? this.times : this.ansTime.time;
+        if (this.ansTime.isStart) {
+          return `${
+            this.ansTime.time < 10 ? `0${this.ansTime.time}` : this.ansTime.time
+          } : ${
+            this.ansTime.sec < 10 ? `0${this.ansTime.sec}` : this.ansTime.sec
+          }`;
+        }
+        return "点击开始";
+      },
     },
     showIcon() {
       return this.showMore ? "mdi-chevron-up" : "mdi-chevron-down";

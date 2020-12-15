@@ -44,22 +44,40 @@
     document.getElementById('close').addEventListener('click', function() {
       inst.close()
     })
-    let time = 10
-    let sec = 60
-    let ts = setInterval(() => {
-      time >= 0 ? (sec > 0 ? sec-- : (time--, (sec = 60))) : (console.log('计时结束~'), clearInterval(ts))
-      console.log(time < 10 ? '0' + time : time, +sec)
-    }, 30)
-    let ts = setInterval((_) => {
-      time >= 0
-        ? sec > 0
-          ? sec--
-          : // : (time--, (sec = 60))
-          --time >= 0
-          ? (sec = 60)
-          : clearInterval(ts)
-        : clearInterval(ts)
-      console.log(time < 10 ? '0' + time : time, +sec)
-    }, 15)
+    let time = 1
+    let sec = 59
+    // let ts = setInterval(() => {
+    //   time >= 0 ? (sec > 0 ? sec-- : (time--, (sec = 60))) : (console.log('计时结束~'), clearInterval(ts))
+    //   console.log(time < 10 ? '0' + time : time, +sec)
+    // }, 30)
+    // let ts = setInterval((_) => {
+    //   this.ansTime.time > 0 ? (this.ansTime.sec > 0 ? (this.ansTime.sec--, this.showHavaTimes(count)) : this.ansTime.time - 1 >= 0 ? ((this.ansTime.sec = 59), (count += interval), --this.ansTime.time) : clearInterval(ts)) : clearInterval(ts)
+    //   // console.log(time < 10 ? "0" + time : time, +sec);
+    // }, 10)
+    // let ts = setInterval((_) => {
+    //   if (time >= 0) {
+    //     if (sec > 0) {
+    //       sec--
+    //       this.showHavaTimes(count)
+    //       console.log(time + ':' + sec)
+    //     } else {
+    //       sec = 59
+    //       --time
+    //     }
+    //   } else {
+    //     clearInterval(ts)
+    //   }
+    // }, 100)
+    let sum = 0
+    function bs(num, i = '开始') {
+      if (num == 1 || num == 2) {
+        console.log('最后num' + num + ' ' + i)
+        return 1
+      }
+      console.log('当前num=' + num + ' ' + i)
+      return bs(num - 2, '-2') + bs(num - 1, '-1')
+    }
+
+    console.log(bs(5))
   </script>
 </html>
