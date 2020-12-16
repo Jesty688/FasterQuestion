@@ -17,9 +17,10 @@ VueRouter.prototype.replace = function(location){
  */
 
 // 组件懒加载
-const Rand = () => import('views/test/rand')
-const Test = () => import('views/test/test')
-const wrongList = () => import('views/wronglist/wrongList')
+const Rand = () => import('views/test/rand')                        //随机测试 
+const Test = () => import('views/test/test')                        //模拟测试
+const wrongList = () => import('views/wronglist/wrongList')         //错题集合
+const collectList = () => import('views/collectlist/collectList')   //收藏集合
 const routes = [
     {
         path:'/',
@@ -40,6 +41,11 @@ const routes = [
         path:'/wronglist',
         name:'wronglist',
         component:wrongList,
+    },
+    {
+        path:'/collection',
+        name:'collection',
+        component:collectList
     }
 ];
 

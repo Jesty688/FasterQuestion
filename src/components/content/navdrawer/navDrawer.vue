@@ -88,7 +88,7 @@ export default {
           { text: "模拟测试", route: "/test" },
         ],
         prtItems: [
-          { text: "收藏题目", icon: "mdi-tag-heart", route: "/collect" },
+          { text: "收藏集合", icon: "mdi-tag-heart", route: "/collection" },
           { text: "错题集合", icon: "mdi-flag-variant", route: "/wronglist" },
           { text: "答题排行", icon: "mdi-summit", route: "/ranking" },
         ],

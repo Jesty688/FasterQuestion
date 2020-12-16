@@ -50,7 +50,4 @@ export default {
   margin-bottom: 12px;
   color: #6190e8;
 }
-.main_rand > * {
-  font-family: "Menlo", "PingFang" !important;
-}
 </style>
