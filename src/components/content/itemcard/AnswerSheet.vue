@@ -124,7 +124,8 @@
         <v-list-item ripple @click="showMoreQs">
           <v-list-item-content>
             <span class="wrapmore body-1">
-              1.Android操作系统手机，如何使用PC机给手机安装软件
+              {{ showMoreTitle }}
+              <!-- {{ currentIndex + 1 + showMoreTitle }} -->
             </span>
           </v-list-item-content>
           <v-icon>{{ showIcon }}</v-icon>
@@ -230,9 +231,10 @@ export default {
       },
 
       showMore: false,
-      itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
+
+      // itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
       selectedIndex: undefined, //答案选项默认选中项
-      currentIndex: 1, //默认题目显示第一题
+      currentIndex: 0, //默认题目显示第一题
       doneItems: [], //以完成题目
     };
   },
@@ -242,6 +244,7 @@ export default {
     //     ? (clearInterval(ts), console.log("清除定时器 并执行交卷操作"))
     //     : (this.progressValue += 1);
     // }, 50);
+    console.dir(this.itemAs);
   },
   //  接受父组件传的参数
   props: {
@@ -259,6 +262,13 @@ export default {
     times: {
       type: Number,
       default: 10, //分钟为单位
+    },
+    // 接受题目列表
+    itemAs: {
+      type: Array,
+      default() {
+        return [];
+      },
     },
   },
   methods: {
@@ -327,7 +337,7 @@ export default {
     },
     // 题目溢出 点击显示更多
     showMoreQs() {
-      this.showMores = !this.showMore;
+      this.showMore = !this.showMore;
     },
     // 已做题目列表
     selAns(index) {
@@ -344,6 +354,7 @@ export default {
     // 提交答案
     submitAs() {},
     personalIdeas() {},
+    // 显示剩余
     showHavaTimes(count) {
       this.ansTime.progressValue = Math.ceil(count);
       // console.log("计时变量:" + this.ansTime.progressValue);
@@ -351,6 +362,9 @@ export default {
     },
   },
   computed: {
+    showMoreTitle() {
+      return this.itemAs[this.currentIndex];
+    },
     showHaveTime: {
       get() {
         // 初始化值

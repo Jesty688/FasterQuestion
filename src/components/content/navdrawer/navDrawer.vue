@@ -89,7 +89,7 @@ export default {
         ],
         prtItems: [
           { text: "收藏题目", icon: "mdi-tag-heart", route: "/collect" },
-          { text: "错题集合", icon: "mdi-flag-variant", route: "/wrong" },
+          { text: "错题集合", icon: "mdi-flag-variant", route: "/wronglist" },
           { text: "答题排行", icon: "mdi-summit", route: "/ranking" },
         ],
         userItem: [

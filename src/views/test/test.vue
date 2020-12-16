@@ -20,7 +20,11 @@
         对了 父组件这样写的话 在子组件的emit中的函数名也需要和父组件对应也就是 事件:属性
         @closeDialog:dialog="changeDialog"
     ) -->
-    <item-sheet :dialog.sync="showDialog" :showAns="false"></item-sheet>
+    <item-sheet
+      :itemAs="itemAs"
+      :dialog.sync="showDialog"
+      :showAns="false"
+    ></item-sheet>
   </v-container>
 </template>
 <script>
@@ -30,6 +34,7 @@ export default {
   data() {
     return {
       showDialog: false,
+      itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
     };
   },
   components: {
