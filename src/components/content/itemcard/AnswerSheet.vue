@@ -43,7 +43,7 @@
       {{ snackMsg.submitMsg }}
     </v-snackbar>
     <!-- 答题选项卡片 -->
-    <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 mb-4">
+    <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 mb-4 bgcgy">
       <!-- 答题进度 -->
       <v-row class="d-flex flex-column ma-0">
         <v-col>
@@ -120,7 +120,7 @@
         </v-col>
       </v-row>
       <!-- 显示题目/文字溢出点击显示更多 -->
-      <v-list nav dense>
+      <v-list nav dense class="bgcgy">
         <v-list-item ripple @click="showMoreQs">
           <v-list-item-content>
             <span class="wrapmore body-1">
@@ -390,6 +390,9 @@ export default {
 };
 </script>
 <style scoped>
+.bgcgy {
+  background-color: #f6f6f6;
+}
 .bgs {
   background-color: #00c58e !important;
   color: #fff !important;

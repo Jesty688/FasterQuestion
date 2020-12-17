@@ -32,8 +32,8 @@
     <div class="ct">
       <!-- 收藏卡片 -->
       <v-card
-        class="pa-3 ma-2 ml-0 items pb-1"
-        elevation="5"
+        class="pa-3 ma-2 ml-0 items pb-1 rounded-lg"
+        elevation="6"
         width="160"
         v-for="n in 20"
         :key="n"
@@ -95,8 +95,7 @@ export default {
   display: grid;
   justify-content: space-between;
   grid-template-columns: repeat(auto-fill, 160px) !important;
-  grid-gap: 3px !important;
-  cursor: pointer;
+  grid-gap: 5px !important;
 }
 /*
 .items:last-child {
@@ -119,6 +118,6 @@ export default {
   border-bottom-right-radius: 20px;
   background-color: #4dcab0;
   margin-right: 3px;
-  box-shadow: 1px 0 12px 0 #6190e8;
+  /* box-shadow: 1px 0 12px 0 #6190e8; */
 }
 </style>

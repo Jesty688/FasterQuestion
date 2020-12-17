@@ -45,5 +45,6 @@ export default {
 .content_top {
   /* 内容往下  顶栏个高度 */
   padding-top: 64px !important;
+  background-color: #f6f6f6 !important;
 }
 </style>

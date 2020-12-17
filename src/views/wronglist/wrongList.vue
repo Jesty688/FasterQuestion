@@ -13,7 +13,7 @@
         错题
       </h2>
     </div>
-    <v-list nav dense>
+    <v-list nav dense class="ls">
       <v-subheader
         >只保存最近
         <strong class="red--text text--lighten-2"> 7</strong> 天</v-subheader
@@ -45,6 +45,9 @@ export default {
 <style scoped>
 .main_rand > * {
   font-family: "Menlo", "PingFang" !important;
+}
+.ls {
+  background-color: #f6f6f6 !important;
 }
 .font_color {
   margin-bottom: 12px;

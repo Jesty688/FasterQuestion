@@ -21,6 +21,7 @@ const Rand = () => import('views/test/rand')                        //随机测�
 const Test = () => import('views/test/test')                        //模拟测试
 const wrongList = () => import('views/wronglist/wrongList')         //错题集合
 const collectList = () => import('views/collectlist/collectList')   //收藏集合
+const Rank = () => import('views/rank/ranking')
 const routes = [
     {
         path:'/',
@@ -46,6 +47,10 @@ const routes = [
         path:'/collection',
         name:'collection',
         component:collectList
+    },{
+        path:'/ranking',
+        name:'rank',
+        component:Rank
     }
 ];
 
