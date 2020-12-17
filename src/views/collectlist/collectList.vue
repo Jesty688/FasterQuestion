@@ -4,7 +4,7 @@
     <div class="font_color">
       <h3>
         当前分类:
-        <strong class="success--text text-decoration-underline">{{
+        <strong style="color: #4dcab0" class="text-decoration-underline">{{
           currentCate
         }}</strong>
       </h3>
@@ -28,12 +28,36 @@
         </v-col>
       </v-row>
     </div>
-    <div class="d-flex flex-wrap justify-space-between">
+
+    <div class="ct">
       <!-- 收藏卡片 -->
-      <v-card class="pa-3 ma-3 ml-0" elevation="7" width="160" v-for="n in 20">
-        <div class="d-flex align-center">
+      <v-card
+        class="pa-3 ma-2 ml-0 items pb-1"
+        elevation="5"
+        width="160"
+        v-for="n in 20"
+        :key="n"
+      >
+        <div class="d-flex align-center mb-2">
           <div class="roundBarc"></div>
-          <span class="grey--text">计算机基础</span>
+          <span class="grey--text text-subtitle-1">计算机基础</span>
+        </div>
+        <div class="genft font-weight-medium">
+          我是题目题目i放声大哭123asasdfsdf是的发生方式
+          廊坊市大房间卡萨浪费结算单方式
+        </div>
+        <v-card-text class="pa-0 ma-0 my-1 as">
+          答案:<span class="teal--text text--lighten-2 font-weight-bold"
+            >A</span
+          >
+        </v-card-text>
+        <div class="d-flex align-center justify-space-between">
+          <v-btn icon color="#f4716d" outlined small>
+            <v-icon small>mdi-heart</v-icon>
+          </v-btn>
+          <v-btn style="font-size: 10px; color: #999" class="px-1" text
+            >212人关注此题</v-btn
+          >
         </div>
       </v-card>
     </div>
@@ -52,6 +76,33 @@ export default {
 };
 </script>
 <style scoped>
+.as {
+  font-size: 12px;
+}
+.genft {
+  color: #666666;
+  font-family: "PingFang" !important;
+  font-size: 14px;
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.ct {
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: repeat(auto-fill, 160px) !important;
+  grid-gap: 3px !important;
+  cursor: pointer;
+}
+/*
+.items:last-child {
+  margin-right: auto !important;
+      <div class="ct d-flex flex-wrap justify-space-between">
+}*/
 .main_rand > * {
   font-family: "Menlo", "PingFang" !important;
 }
@@ -66,8 +117,8 @@ export default {
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  background-color: #1a73e8;
-  margin-right: 8px;
+  background-color: #4dcab0;
+  margin-right: 3px;
   box-shadow: 1px 0 12px 0 #6190e8;
 }
 </style>
