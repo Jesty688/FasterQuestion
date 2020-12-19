@@ -103,7 +103,7 @@ export default {
           {
             text: "人脉",
             icon: "mdi-account-multiple",
-            route: "/userss",
+            route: "/users",
             isShow: true,
           },
         ],
@@ -117,7 +117,7 @@ export default {
      *最后在主组件挂载时监听并接受($on)侧滑组件发送的事件这里传递的参数是:侧滑组件对象
      *因为对象是引用传递又因为vue双向数据绑定所以修改控制侧滑组件data数据中的布尔值 直接去反
      *Ps:其实可以直接在主组件中的侧滑组件中加入ref属性 然后this.refs.name.drawer = !this.refs.name.drawer
-     *因为没怎么用过父子组件传值/兄弟组件传值所以用了这个方法
+     *体验一次时间总o.0
      */
     eventBus.$on("tigger", () => {
       eventBus.$emit("ctltigger", this);

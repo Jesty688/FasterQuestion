@@ -22,6 +22,7 @@ const Test = () => import('views/test/test')                        //模拟测�
 const wrongList = () => import('views/wronglist/wrongList')         //错题集合
 const collectList = () => import('views/collectlist/collectList')   //收藏集合
 const Rank = () => import('views/rank/ranking')
+const User = () => import('views/users/user')
 const routes = [
     {
         path:'/',
@@ -51,7 +52,14 @@ const routes = [
         path:'/ranking',
         name:'rank',
         component:Rank
+    },
+    {
+        path:'/users',
+        name:'user',
+        component:User
+
     }
+    
 ];
 
 

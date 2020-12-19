@@ -5,7 +5,7 @@
     <!-- 侧边栏 -->
     <jst-drawer></jst-drawer>
     <v-main class="content_top">
-      <v-container>
+      <v-container class="px-2">
         <!-- 主页面 -->
         <keep-alive>
           <router-view></router-view>

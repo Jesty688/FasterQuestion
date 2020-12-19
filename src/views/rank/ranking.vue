@@ -2,7 +2,7 @@
 <template>
   <v-container class="main_rand">
     <!-- 顶部标题 -->
-    <div class="d-flex">
+    <!-- <div class="d-flex">
       <v-icon x-large color="primary" class="mr-3"> mdi-school-outline</v-icon>
       <div class="inline">
         <h2 style="color: #333; letter-spacing: 0.5px">答题排行</h2>
@@ -10,9 +10,24 @@
           答题者有资格参与排行和线上交易...
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- 显示前三 -->
     <v-container>
+      <v-row justify="center">
+        <v-col lg="6" cols="11" class="pa-0 mb-3">
+          <div class="d-flex">
+            <v-icon x-large color="primary" class="mr-3">
+              mdi-school-outline</v-icon
+            >
+            <div class="inline">
+              <h2 style="color: #333; letter-spacing: 0.5px">答题排行</h2>
+              <div class="grey--text font-weight-medium">
+                答题者有资格参与排行和线上交易...
+              </div>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-col lg="6" cols="11" class="pa-0">
           <v-card
