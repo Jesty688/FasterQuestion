@@ -1,0 +1,37 @@
+{
+  "user": [
+    {
+      "id": 1,
+      "username": "",
+      "pwd": "",
+      "area": "",
+      "introduce": "",
+      "oneWord": "",
+      "school": "",
+      "userHome": "",
+      "fllow": [{ "id": 2 }]
+    },
+    {
+      "id": 2,
+      "username": "",
+      "pwd": "",
+      "area": "",
+      "introduce": "",
+      "oneWord": "",
+      "school": "",
+      "userHome": "",
+      "fllow": [{ "id": 1 }]
+    },
+    {
+      "id": 3,
+      "username": "",
+      "pwd": "",
+      "area": "",
+      "introduce": "",
+      "oneWord": "",
+      "school": "",
+      "userHome": "",
+      "fllow": [{ "id": 2 }]
+    }
+  ]
+}

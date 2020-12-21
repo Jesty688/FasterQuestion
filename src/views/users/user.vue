@@ -4,7 +4,7 @@
     <!-- <div><v-subheader class="pa-0 ml-2">人员推荐</v-subheader></div> -->
     <v-row no-gutters>
       <v-col cols="12"
-        ><v-subheader class="pa-0 ml-3"> 人员推荐22</v-subheader></v-col
+        ><v-subheader class="pa-0 ml-3">人员推荐</v-subheader></v-col
       >
       <v-col v-for="n in 7" :key="n" cols="6" sm="4" md="3" lg="3">
         <v-card
@@ -72,8 +72,8 @@ export default {
 .loadmore {
   user-select: none;
   /* margin: 10px auto; */
-  padding: 10px;
-  width: 200px;
+  padding: 6px 8px;
+  width: 150px;
   border-radius: 25px;
   background-color: rgba(0, 0, 0, 0.3);
   color: #fff !important;

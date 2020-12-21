@@ -244,7 +244,7 @@ export default {
     //     ? (clearInterval(ts), console.log("清除定时器 并执行交卷操作"))
     //     : (this.progressValue += 1);
     // }, 50);
-    console.dir(this.itemAs);
+    // console.dir(this.itemAs);
   },
   //  接受父组件传的参数
   props: {

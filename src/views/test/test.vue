@@ -28,6 +28,7 @@
   </v-container>
 </template>
 <script>
+// 导入答题组件
 import itemSheet from "content/itemcard/AnswerSheet";
 export default {
   name: "test",
