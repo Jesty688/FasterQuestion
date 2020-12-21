@@ -1,37 +1,15 @@
 {
   "user": [
     {
-      "id": 1,
-      "username": "",
-      "pwd": "",
+      "username": "Jesty",
+      "pwd": "fq5aae053291fa28d69b1631c763bf18c4be12999e455e9bf60f04e38d04fbef6ascjs",
       "area": "",
       "introduce": "",
       "oneWord": "",
       "school": "",
       "userHome": "",
-      "fllow": [{ "id": 2 }]
-    },
-    {
-      "id": 2,
-      "username": "",
-      "pwd": "",
-      "area": "",
-      "introduce": "",
-      "oneWord": "",
-      "school": "",
-      "userHome": "",
-      "fllow": [{ "id": 1 }]
-    },
-    {
-      "id": 3,
-      "username": "",
-      "pwd": "",
-      "area": "",
-      "introduce": "",
-      "oneWord": "",
-      "school": "",
-      "userHome": "",
-      "fllow": [{ "id": 2 }]
+      "fllow": [],
+      "id": 1
     }
   ]
 }

@@ -10,11 +10,19 @@
           </v-btn>
           <div class="dl-title">注册</div>
         </div>
+        <v-progress-linear
+          v-show="regForm.showLoadding"
+          color="#4caf50"
+          indeterminate
+          height="6"
+          class="mt-n6 mb-6"
+        ></v-progress-linear>
         <v-form class="dl-form" ref="regforms" lazy-validation>
           <v-text-field
             class="pt-4 pb-6"
             v-model="regForm.username"
             :rules="regRules.username"
+            :error-messages="regForm.errMsg"
             label="用户名或邮箱"
             required
           ></v-text-field>
@@ -48,6 +56,8 @@
 </template>
 
 <script>
+import { checkUserName, toSignUp } from "network/register";
+
 export default {
   data() {
     return {
@@ -55,21 +65,23 @@ export default {
         username: "",
         passwd: "",
         passwdEnsure: "",
+        errMsg: "",
+        showLoadding: false,
       },
       regRules: {
         username: [
-          (v) => !!v || "账号不能为空",
+          (v) => !!v || "账号不能为空" || /^\w+@(\w+\.)+[a-z]+$/i.test(v),
+          /*
           (v) => {
             return /^\w+@(\w+\.)+[a-z]+$/i.test(v) === false
               ? "邮箱格式错误"
               : true;
-          },
+          },*/
         ],
         passwd: [(v) => !!v || "密码不能为空"],
         passwdEnsure: [
           (v) => !!v || "密码不能为空",
           (v) => {
-            console.log(this.regForm.passwd);
             return this.regForm.passwd !== v ? "两次密码输入不一致" : true;
           },
         ],
@@ -92,7 +104,27 @@ export default {
       this.$emit("update:isRegister", false);
     },
     signIn() {
-      console.log(this.$refs.regforms.validate);
+      this.regForm.errMsg = "";
+      this.$refs.regforms.validate()
+        ? ((this.regForm.showLoadding = true),
+          checkUserName(this.regForm.username).then((data) => {
+            this.regForm.showLoadding = false;
+            // 不为空则当前用户名已被注册过
+            data.length != 0
+              ? (this.regForm.errMsg = "当前用户名已被使用")
+              : // 用户名正常发送注册请求
+                toSignUp(this.regForm.username, this.regForm.passwd).then(
+                  (res) => {
+                    if (res.hasOwnProperty("id")) {
+                      this.regForm.errMsg = "";
+                      this.toLogin();
+                    } else {
+                      this.regForm.errMsg = "注册失败咯";
+                    }
+                  }
+                );
+          }))
+        : (this.regForm.errMsg = "");
     },
     toLogin() {
       this.$emit("update:isRegister", false);
