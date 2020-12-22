@@ -10,19 +10,29 @@
           </v-btn>
           <div class="dl-title">登录</div>
         </div>
-        <v-form class="dl-form" ref="form" v-model="valid" lazy-validation>
+        <v-progress-linear
+          v-show="loginForm.showLoadding"
+          color="#4caf50"
+          indeterminate
+          height="4"
+          class="mt-n6 mb-6"
+        ></v-progress-linear>
+        <v-form class="dl-form" ref="loginforms" lazy-validation>
           <v-text-field
             class="pt-4 pb-6"
-            v-model="name"
-            :rules="nameRules"
+            v-model="loginForm.username"
+            :rules="loginRules.username"
+            :error-messages="loginForm.errMsg"
             label="用户名或邮箱"
             required
           ></v-text-field>
           <v-text-field
             class="pt-4 pb-6"
-            v-model="name"
-            :rules="nameRules"
+            v-model="loginForm.passwd"
+            :rules="loginRules.passwd"
             label="密码"
+            @keyup.enter.native="signIn"
+            type="password"
             required
           ></v-text-field>
 
@@ -49,7 +59,7 @@
             </v-menu>
 
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="kq"> 登录 </v-btn>
+            <v-btn color="primary" @click="signIn"> 登录 </v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
@@ -58,17 +68,31 @@
 </template>
 
 <script>
+import { toSignIn } from "network/sign";
 export default {
   data() {
     return {
-      valid: true,
-      name: "",
-      nameRules: [
-        (v) => !!v || "账号不能为空",
-        (v) => (v && v.length <= 10) || "账号或密码错误",
-      ],
+      loginForm: {
+        username: "",
+        passwd: "",
+        errMsg: "",
+        showLoadding: false,
+      },
+      loginRules: {
+        username: [
+          (v) => !!v || "账号不能为空" || /^\w+@(\w+\.)+[a-z]+$/i.test(v),
+          /*
+          (v) => {
+            return /^\w+@(\w+\.)+[a-z]+$/i.test(v) === false
+              ? "邮箱格式错误"
+              : true;
+          },*/
+        ],
+        passwd: [(v) => !!v || "密码不能为空"],
+      },
     };
   },
+
   props: {
     // 现在登录 注册框
     isLogin: {
@@ -83,6 +107,32 @@ export default {
   methods: {
     kq() {
       this.$emit("update:isLogin", false);
+    },
+    signIn() {
+      this.loginForm.errMsg = "";
+      this.$refs.loginforms.validate()
+        ? ((this.loginForm.showLoadding = true),
+          toSignIn(this.loginForm.username, this.loginForm.passwd).then(
+            (res) => {
+              this.loginForm.showLoadding = false;
+              // console.log(res);
+              if (res.length) {
+                // 登录成功
+                this.loginForm.errMsg = "";
+                this.$emit("update:isLogin", false);
+                // 保存登录状态和登录信息
+                this.$store.commit("setToken");
+                this.$store.commit("setUsername", this.loginForm.username);
+                this.$store.commit(
+                  "setAvater",
+                  this.loginForm.username.substr(0, 1)
+                );
+              } else {
+                this.loginForm.errMsg = "用户名或密码错误";
+              }
+            }
+          ))
+        : (this.loginForm.errMsg = "");
     },
     toRegister() {
       // 跳转注册页面

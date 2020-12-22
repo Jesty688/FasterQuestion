@@ -47,7 +47,7 @@
             </v-btn>
 
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="signIn"> 注册 </v-btn>
+            <v-btn color="primary" @click="signUp"> 注册 </v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { checkUserName, toSignUp } from "network/register";
+import { checkUserName, toSignUp } from "network/sign";
 
 export default {
   data() {
@@ -71,6 +71,7 @@ export default {
       regRules: {
         username: [
           (v) => !!v || "账号不能为空" || /^\w+@(\w+\.)+[a-z]+$/i.test(v),
+          (v) => !!/^[\w_@\.]+$/i.test(v) || "账号只能包含[0-9a-z@.]",
           /*
           (v) => {
             return /^\w+@(\w+\.)+[a-z]+$/i.test(v) === false
@@ -103,7 +104,7 @@ export default {
     kq() {
       this.$emit("update:isRegister", false);
     },
-    signIn() {
+    signUp() {
       this.regForm.errMsg = "";
       this.$refs.regforms.validate()
         ? ((this.regForm.showLoadding = true),

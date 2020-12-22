@@ -1,17 +1,16 @@
+<!-- 随机练习 -->
 <template>
-  <div>
+  <v-container class="main_rand">
     <!-- 显示答题进度对话框 -->
     <v-dialog
-      v-model="dialog"
+      v-model="doneDialog"
       fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
     >
       <v-card tile>
         <v-toolbar dark color="primary">
-          <!-- @click="showDialog = false" -->
-          <!-- 这里之所以可以这样写是在父组件中使用了sync修饰 其实也是等于我上面的写法 只不过这是vue提供的语法糖 -->
-          <v-btn icon dark @click="closeDialog">
+          <v-btn icon dark @click="doneDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>已做题目</v-toolbar-title>
@@ -32,18 +31,23 @@
         </div>
       </v-card>
     </v-dialog>
-    <!-- 交卷提示 -->
-    <v-snackbar
-      color="#1A73E8"
-      top
-      elevation="6"
-      rounded
-      v-model="snackMsg.submitPaper"
-    >
-      {{ snackMsg.submitMsg }}
-    </v-snackbar>
+    <!-- 顶部提示 -->
+    <div class="font_color">
+      <h2>Hello,</h2>
+      <h2>Suchs Jesty.👋</h2>
+    </div>
+    <!-- 题型选择 -->
+    <v-col class="d-flex pa-0" cols="12" sm="2">
+      <v-select
+        :items="['Java', 'C++', '计算机基础']"
+        label="题型选择"
+        append-icon="mdi-shape"
+        menu-props="auto, overflowX"
+      ></v-select>
+    </v-col>
+
     <!-- 答题选项卡片 -->
-    <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 mb-4 bgcgy">
+    <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 mb-4">
       <!-- 答题进度 -->
       <v-row class="d-flex flex-column ma-0">
         <v-col>
@@ -59,39 +63,35 @@
             class="alphabgc"
           >
             <v-icon left color="#00c58e"> mdi-routes </v-icon>
-            已完成 {{ doneData.hasDone }} / {{ doneData.has }}
+            已完成 1 / 123
           </v-chip>
           <v-text-field
             append-icon="mdi-arrow-right"
             class="d-inline-flex ml-4"
             label="跳转题号"
-            :error="qsInputs.errStatus"
-            :error-messages="qsInputs.errMsg"
-            v-model="qsInputs.qsValue"
             @click:append="gotoQs"
             style="max-width: 35%"
           ></v-text-field>
         </v-col>
         <!-- 时间条 -->
         <v-col class="mt-n3">
-          <v-btn block text color="primary" class="mb-1" @click="startAs">
-            <v-icon left> mdi-alarm </v-icon>{{ showHaveTime }}</v-btn
+          <v-btn block text color="primary" class="mb-1">
+            <v-icon left> mdi-alarm </v-icon>116:45</v-btn
           >
           <v-progress-linear
             color="primary"
-            :buffer-value="ansTime.progressValue"
-            :value="ansTime.progressValue"
+            buffer-value="0"
+            value="20"
             rounded
             striped
             stream
           ></v-progress-linear>
         </v-col>
-        <!-- 题目上下选择 -->
         <v-col class="d-flex">
           <v-chip
             style="color: #2f495e"
             color="#edf2f7"
-            @click="prevQs"
+            @click="personalIdeas"
             class="mr-4"
             v-ripple="{ class: 'white--text' }"
           >
@@ -101,7 +101,7 @@
           <v-chip
             style="color: #fff"
             color="#00e0a1"
-            @click="nextQs"
+            @click="personalIdeas"
             v-ripple="{ class: 'white--text' }"
           >
             <v-icon small left color="#fff"> mdi-arrow-right </v-icon>
@@ -120,12 +120,11 @@
         </v-col>
       </v-row>
       <!-- 显示题目/文字溢出点击显示更多 -->
-      <v-list nav dense class="bgcgy">
+      <v-list nav dense>
         <v-list-item ripple @click="showMoreQs">
           <v-list-item-content>
             <span class="wrapmore body-1">
-              {{ showMoreTitle }}
-              <!-- {{ currentIndex + 1 + showMoreTitle }} -->
+              1.Android操作系统手机，如何使用PC机给手机安装软件
             </span>
           </v-list-item-content>
           <v-icon>{{ showIcon }}</v-icon>
@@ -164,7 +163,7 @@
         </div>
       </v-card-text>
       <!-- 查看正确答案 / 解析 / 提交个人解析 -->
-      <v-expansion-panels v-if="showAns" flat popout>
+      <v-expansion-panels flat popout>
         <v-expansion-panel>
           <v-expansion-panel-header expand-icon="mdi-eye"
             >查看答案:</v-expansion-panel-header
@@ -204,188 +203,51 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </v-card>
-  </div>
+  </v-container>
 </template>
+
 <script>
 export default {
-  name: "AnswerSheet",
   data() {
     return {
-      // 交卷提示
-      snackMsg: {
-        submitPaper: false,
-        submitMsg: "",
-      },
-      // 定义题目跳转对象
-      qsInputs: {
-        qsValue: "",
-        errStatus: false,
-        errMsg: "",
-      },
-      //   控制时间进度条显示进度
-      ansTime: {
-        sec: 59,
-        time: null,
-        progressValue: 0,
-        isStart: false,
-      },
-
+      doneDialog: false,
       showMore: false,
-
-      // itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
-      selectedIndex: undefined, //答案选项默认选中项
-      currentIndex: 0, //默认题目显示第一题
-
-      doneItems: [], //以完成题目
+      itemAs: [
+        { option: "A", ans: "测试A选项正确答案" },
+        { option: "B", ans: "测试B选项正确答案" },
+        { option: "C", ans: "测试C选项正确答案" },
+        { option: "D", ans: "测试D选项正确答案" },
+      ],
+      selectedIndex: 0, //默认选中项
+      selectedItems: [],
     };
   },
-  mounted() {
-    console.log(this.doneData.hasDone);
-  },
-  //  接受父组件传的参数
-  props: {
-    // 接收 是否显示查看已完成题目对话框
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
-    // 接收 是否显示答案区域
-    showAns: {
-      type: Boolean,
-      default: true,
-    },
-    // 接收 显示答题时间
-    times: {
-      type: Number,
-      default: 10, //分钟为单位
-    },
-    // 接受题目列表
-    itemAs: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    // 当前题型有多少道题目
-    doneData: {
-      type: Object,
-      default() {
-        return {
-          haveDone: 0,
-          have: 0,
-        };
-      },
-    },
-  },
+  mounted() {},
   methods: {
-    /**
-     * sync子组件修改父组件数据
-     */
-    closeDialog() {
-      this.$emit("update:dialog", false);
+    // 题号跳转
+    gotoQs() {
+      console.log(123);
     },
-    //查看已做题目
+    //已做题目
     doneQs() {
-      this.$emit("update:dialog", true);
+      this.doneDialog = true;
     },
     // 点击已做题目
     listQs(index) {
       console.log(index);
-      this.$emit("update:dialog", false);
-    },
-    // 题目跳转
-    gotoQs() {
-      /**
-       *  简单判断是不是数字
-       *  console.log(!isNaN(parseInt(this.qsInputs.qsValue))); 这样写有bug
-       *  parseInt会把非数字的舍去  如111a 结果是111 但是a111结果是NaN 小细节
-       */
-      !isNaN(Number(this.qsInputs.qsValue)) && this.qsInputs.qsValue.length != 0
-        ? ((this.qsInputs.errStatus = false),
-          (this.qsInputs.errMsg = ""),
-          (this.qsInputs.qsValue = ""),
-          (this.currentIndex = this.qsInputs.qsValue)) //跳转后清空输入框
-        : ((this.qsInputs.errStatus = true),
-          (this.qsInputs.errMsg = "输入不能为空/只能是数字!"));
-      //   console.log(!isNaN(Number(this.qsInputs.qsValue)));
-    },
-    // 开始答题
-    startAs() {
-      //防抖(多次点击)
-      let interval = parseFloat((100 / this.ansTime.time).toFixed(2));
-      let count = interval;
-      if (!this.ansTime.isStart) {
-        this.ansTime.isStart = true; //开始计时
-        console.log("答题开始");
-        let ts = setInterval((_) => {
-          //console.log(this.ansTime.time);
-          if (this.ansTime.time >= 0) {
-            if (this.ansTime.sec > 0) {
-              this.ansTime.sec--;
-            } else {
-              if (this.ansTime.time - 1 >= 0) {
-                this.ansTime.sec = 59;
-                --this.ansTime.time;
-                this.showHavaTimes(count);
-                count += interval;
-              } else {
-                console.log("结束了!");
-                this.snackMsg.submitPaper = true;
-                this.snackMsg.submitMsg = "时间到!即将交卷";
-                clearInterval(ts);
-              }
-            }
-          }
-        }, 10);
-      } else {
-        console.log("无法重复点击");
-      }
-    },
-    // 题目溢出 点击显示更多
-    showMoreQs() {
-      this.showMore = !this.showMore;
-    },
-    // 已做题目列表
-    selAns(index) {
-      console.log(this.selectedIndex);
-    },
-    // 上一题
-    prevQs() {
-      this.currentIndex = this.currentIndex - 1;
-    },
-    //下一题
-    nextQs() {
-      this.currentIndex = this.currentIndex + 1;
+      this.doneDialog = false;
     },
     // 提交答案
     submitAs() {},
-    personalIdeas() {},
-    // 显示剩余
-    showHavaTimes(count) {
-      this.ansTime.progressValue = Math.ceil(count);
-      // console.log("计时变量:" + this.ansTime.progressValue);
-      return this.showHaveTime;
+    showMoreQs() {
+      this.showMore = !this.showMore;
     },
+    selAns(index) {
+      console.log(this.selectedIndex);
+    },
+    personalIdeas() {},
   },
   computed: {
-    showMoreTitle() {
-      return this.itemAs[this.currentIndex];
-    },
-    showHaveTime: {
-      get() {
-        // 初始化值
-        this.ansTime.time =
-          this.ansTime.time === null ? this.times : this.ansTime.time;
-        if (this.ansTime.isStart) {
-          return `${
-            this.ansTime.time < 10 ? `0${this.ansTime.time}` : this.ansTime.time
-          } : ${
-            this.ansTime.sec < 10 ? `0${this.ansTime.sec}` : this.ansTime.sec
-          }`;
-        }
-        return "点击开始";
-      },
-    },
     showIcon() {
       return this.showMore ? "mdi-chevron-up" : "mdi-chevron-down";
     },
@@ -396,15 +258,21 @@ export default {
 };
 </script>
 <style scoped>
-.bgcgy {
-  background-color: #f6f6f6;
-}
 .bgs {
   background-color: #00c58e !important;
   color: #fff !important;
   border: 1px solid #00c58e !important;
 }
-
+.main_rand {
+  height: 100%;
+}
+.main_rand > * {
+  font-family: "Menlo", "PingFang" !important;
+}
+.font_color {
+  margin-bottom: 12px;
+  color: #6190e8;
+}
 .alphabgc {
   user-select: none;
   /* background-color: rgba(0, 0, 0, 0.05) !important;  */

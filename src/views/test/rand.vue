@@ -1,36 +1,5 @@
-<!-- 随机练习 -->
 <template>
   <v-container class="main_rand">
-    <!-- 显示答题进度对话框 -->
-    <v-dialog
-      v-model="doneDialog"
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-    >
-      <v-card tile>
-        <v-toolbar dark color="primary">
-          <v-btn icon dark @click="doneDialog = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-toolbar-title>已做题目</v-toolbar-title>
-        </v-toolbar>
-        <v-divider></v-divider>
-        <div class="d-flex flex-row flex-wrap justify-space-around pa-2">
-          <v-btn
-            @click="listQs(n)"
-            class="ma-1"
-            :class="n == 12 || n == 77 ? 'bgs' : ''"
-            v-for="n in 100"
-            :key="n"
-            elevation="0"
-            color="#fff"
-            style="border: 1px solid grey; font-weight: normal; color: grey"
-            >{{ n }}</v-btn
-          >
-        </div>
-      </v-card>
-    </v-dialog>
     <!-- 顶部提示 -->
     <div class="font_color">
       <h2>Hello,</h2>
@@ -39,281 +8,74 @@
     <!-- 题型选择 -->
     <v-col class="d-flex pa-0" cols="12" sm="2">
       <v-select
-        :items="['Java', 'C++', '计算机基础']"
+        :items="Qs.qType"
+        v-model="Qs.currqType"
         label="题型选择"
         append-icon="mdi-shape"
         menu-props="auto, overflowX"
       ></v-select>
     </v-col>
-
-    <!-- 答题选项卡片 -->
-    <v-card outlined class="rounded-t-lg rounded-b-lg pa-3 mb-4">
-      <!-- 答题进度 -->
-      <v-row class="d-flex flex-column ma-0">
-        <v-col>
-          <v-chip class="alphabgc">
-            <v-icon left color="primary">mdi-image-filter-drama</v-icon>
-            保存当前作答记录
-          </v-chip>
-        </v-col>
-        <v-col>
-          <v-chip
-            v-ripple="{ class: 'grey--text' }"
-            @click="doneQs"
-            class="alphabgc"
-          >
-            <v-icon left color="#00c58e"> mdi-routes </v-icon>
-            已完成 1 / 123
-          </v-chip>
-          <v-text-field
-            append-icon="mdi-arrow-right"
-            class="d-inline-flex ml-4"
-            label="跳转题号"
-            @click:append="gotoQs"
-            style="max-width: 35%"
-          ></v-text-field>
-        </v-col>
-        <!-- 时间条 -->
-        <v-col class="mt-n3">
-          <v-btn block text color="primary" class="mb-1">
-            <v-icon left> mdi-alarm </v-icon>116:45</v-btn
-          >
-          <v-progress-linear
-            color="primary"
-            buffer-value="0"
-            value="20"
-            rounded
-            striped
-            stream
-          ></v-progress-linear>
-        </v-col>
-        <v-col class="d-flex">
-          <v-chip
-            style="color: #2f495e"
-            color="#edf2f7"
-            @click="personalIdeas"
-            class="mr-4"
-            v-ripple="{ class: 'white--text' }"
-          >
-            <v-icon small left color="#2F495E"> mdi-arrow-left </v-icon>
-            上一题
-          </v-chip>
-          <v-chip
-            style="color: #fff"
-            color="#00e0a1"
-            @click="personalIdeas"
-            v-ripple="{ class: 'white--text' }"
-          >
-            <v-icon small left color="#fff"> mdi-arrow-right </v-icon>
-            下一题
-          </v-chip>
-          <v-chip
-            style="color: #fff"
-            color="primary"
-            @click="submitAs"
-            class="ml-auto"
-            v-ripple="{ class: 'white--text' }"
-          >
-            <v-icon small left color="#fff"> mdi-check </v-icon>
-            提交
-          </v-chip>
-        </v-col>
-      </v-row>
-      <!-- 显示题目/文字溢出点击显示更多 -->
-      <v-list nav dense>
-        <v-list-item ripple @click="showMoreQs">
-          <v-list-item-content>
-            <span class="wrapmore body-1">
-              1.Android操作系统手机，如何使用PC机给手机安装软件
-            </span>
-          </v-list-item-content>
-          <v-icon>{{ showIcon }}</v-icon>
-        </v-list-item>
-      </v-list>
-      <!-- 显示更多内容(对应上面) -->
-      <v-expand-transition>
-        <div v-if="showMore">
-          <v-card-text class="px-4 py-1"
-            >Android操作系统手机，如何使用PC机给手机安装软件</v-card-text
-          >
-          <v-divider class="mx-5"></v-divider>
-        </div>
-      </v-expand-transition>
-      <!-- 答案选项卡 -->
-      <v-card-text class="py-0">
-        <div class="itemKey">
-          <v-radio-group v-model="selectedIndex" class="mt-0 pt-0">
-            <div
-              class="d-inline-flex align-center"
-              v-for="(item, index) in itemAs"
-              :key="index"
-            >
-              <div
-                :class="[roundedBars == index ? 'roundBarc' : 'roundBar']"
-              ></div>
-              <v-radio
-                mandatory
-                @click="selAns"
-                class="my-4"
-                :label="item.ans"
-                :value="index"
-              ></v-radio>
-            </div>
-          </v-radio-group>
-        </div>
-      </v-card-text>
-      <!-- 查看正确答案 / 解析 / 提交个人解析 -->
-      <v-expansion-panels flat popout>
-        <v-expansion-panel>
-          <v-expansion-panel-header expand-icon="mdi-eye"
-            >查看答案:</v-expansion-panel-header
-          >
-          <v-expansion-panel-content>
-            <div class="mb-4">
-              <span class="rb">正确答案:<code>A</code></span>
-            </div>
-            <div class="mb-4">
-              <span class="rb">解析:</span>
-              <code class="mr-4"
-                >12312323撒旦法撒旦法沙发撒旦法沙发士大夫撒旦法阿斯蒂芬撒旦法沙发上的发送到f安抚安抚阿萨德发送到符点数123123123123
-                暂无解析~</code
-              >
-              <v-chip
-                style="color: #2f495e"
-                color="#edf2f7"
-                @click="personalIdeas"
-                v-ripple="{ class: 'primary--text' }"
-              >
-                <v-icon small left color="#2F495E"> mdi-feather </v-icon>
-                提交解析
-              </v-chip>
-            </div>
-
-            <v-badge color="green" content="2" top offset-y="15" offset-x="15">
-              <v-btn class="ma-1" outlined fab color="green" x-small>
-                <v-icon small>mdi-thumb-up</v-icon>
-              </v-btn>
-            </v-badge>
-            <v-badge color="grey" content="12" top offset-y="15" offset-x="15">
-              <v-btn class="ma-1" outlined fab color="grey" x-small>
-                <v-icon small>mdi-thumb-down</v-icon>
-              </v-btn>
-            </v-badge>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-card>
+    <!-- sync (简单实现:其实原理就是父组件给子组件经过props传数据 子组件想修改父组件传过来的数据 但是呢 vue是不支持子组件直接修改父组件的数据的 
+        所以这时候又用到了 this.$emit 现在子组件可以修改父组件的数据了
+        PS:这里的 [@事件:属性] 我暂时也不清楚是什么意思有没有大佬出来给我解释一下
+        对了 父组件这样写的话 在子组件的emit中的函数名也需要和父组件对应也就是 事件:属性
+        @closeDialog:dialog="changeDialog"
+    ) -->
+    <item-sheet
+      :itemAs="itemAs"
+      :dialog.sync="showDialog"
+      :showAns="true"
+      :doneData.sync="doneData"
+    ></item-sheet>
   </v-container>
 </template>
-
 <script>
+// 导入答题组件
+import itemSheet from "content/itemcard/AnswerSheet";
+// 导入此页面所有请求
+import { getQsType, getQsList } from "network/test";
 export default {
+  name: "test",
   data() {
     return {
-      doneDialog: false,
-      showMore: false,
-      itemAs: [
-        { option: "A", ans: "测试A选项正确答案" },
-        { option: "B", ans: "测试B选项正确答案" },
-        { option: "C", ans: "测试C选项正确答案" },
-        { option: "D", ans: "测试D选项正确答案" },
-      ],
-      selectedIndex: 0, //默认选中项
-      selectedItems: [],
+      //题型
+      Qs: {
+        currqType: "",
+        qType: [],
+      },
+      // 完成进度
+      doneData: {
+        hasDone: 0,
+        has: 0,
+      },
+      showDialog: false,
+      itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
     };
   },
-  mounted() {},
-  methods: {
-    // 题号跳转
-    gotoQs() {
-      console.log(123);
-    },
-    //已做题目
-    doneQs() {
-      this.doneDialog = true;
-    },
-    // 点击已做题目
-    listQs(index) {
-      console.log(index);
-      this.doneDialog = false;
-    },
-    // 提交答案
-    submitAs() {},
-    showMoreQs() {
-      this.showMore = !this.showMore;
-    },
-    selAns(index) {
-      console.log(this.selectedIndex);
-    },
-    personalIdeas() {},
+  components: {
+    itemSheet,
   },
-  computed: {
-    showIcon() {
-      return this.showMore ? "mdi-chevron-up" : "mdi-chevron-down";
+  methods: {
+    // 获取题型
+    getqType() {
+      getQsType().then((data) => {
+        // console.log(data);
+        this.Qs.qType = data;
+        this.Qs.currqType = data[0];
+      });
     },
-    roundedBars() {
-      return this.selectedIndex;
-    },
+  },
+  mounted() {
+    this.getqType();
   },
 };
 </script>
 <style scoped>
-.bgs {
-  background-color: #00c58e !important;
-  color: #fff !important;
-  border: 1px solid #00c58e !important;
-}
-.main_rand {
-  height: 100%;
-}
 .main_rand > * {
   font-family: "Menlo", "PingFang" !important;
 }
 .font_color {
   margin-bottom: 12px;
   color: #6190e8;
-}
-.alphabgc {
-  user-select: none;
-  /* background-color: rgba(0, 0, 0, 0.05) !important;  */
-  background-color: #edf2f7 !important;
-}
-.wrapmore {
-  /* 多出文字以省略号表示 需要设置宽度(js) */
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  user-select: none;
-  /* border: solid 1px red; */
-}
-.roundBar {
-  width: 4px;
-  height: 24px;
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  background-color: #ccc;
-  margin-right: 8px;
-}
-.roundBarc {
-  width: 4px;
-  height: 24px;
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  background-color: #1a73e8;
-  margin-right: 8px;
-  box-shadow: 1px 0 12px 0 #6190e8;
-}
-.rb {
-  margin-right: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-  color: white;
-  background-color: #0377fe;
-  border-radius: 360px;
-  box-shadow: 1px 0 12px 0 rgba(3, 119, 254, 0.58) !important;
 }
 </style>

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import store from "../store";
 Vue.use(VueRouter);
 //解决重复点击一个路由报错问题
 const [VueRouterPush , VueRouterReplace] = [VueRouter.prototype.push , VueRouter.prototype.replace];
@@ -63,7 +63,30 @@ const routes = [
 ];
 
 
-export default new VueRouter({
+const router = new VueRouter({
     mode:'history', //地址栏无#
     routes          //初始化路由条目
 })
+// 需要登录的页面
+let needLoginList = ['collection' , 'rand' , 'test' , "wronglist"]
+// 全局路由守卫
+router.beforeEach((to , from , next) => {
+    let hasLogin = needLoginList.some((cur , index, arr) => {
+        return cur === to.name
+    })
+    // 
+    if(hasLogin){
+        //如果当前页面需要登录的话先判断是否已经是登录 在vuex中查询登录状态
+        //未登录出现提示信息 路由跳转到user页面
+        if(!store.state.loginStatus.userName && !store.state.loginStatus.token){
+            // console.log(store.state.loginStatus.userName , store.state.loginStatus.token)
+            // console.log(store.state.loginStatus)
+            store.commit('triggerTip' , true)
+            next('/users')
+        }
+    }
+    next();
+})
+
+export default router
+

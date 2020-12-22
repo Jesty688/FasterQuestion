@@ -44,7 +44,8 @@
     document.getElementById('close').addEventListener('click', function() {
       inst.close()
     })
-    let a = '123123@qq.com'
-    let reg = /^\w+@(\w+\.)+[a-z]+$/i
+    let a = 'sssdfasd@qq苏'
+    let reg = /^[\w_@\.]+$/i
+    console.log(reg.test(a))
   </script>
 </html>

@@ -13,7 +13,7 @@
           :class="n % 2 == 0 ? 'odd' : 'even'"
         >
           <a
-            href="javascript:void()"
+            href="javascript:;"
             class="iteminfo"
             v-ripple="{ class: `secondary--text` }"
           >

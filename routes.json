@@ -1,3 +1,5 @@
 {
-  "/user/check/:username": "/user?username=:username"
+  "/user/check/:username": "/user?username=:username",
+  "/user/login/:uname/:pwd": "/user?username=:uname&pwd=:pwd",
+  "/questionList?题型=:type&_page=0&_limit=50": "/"
 }
