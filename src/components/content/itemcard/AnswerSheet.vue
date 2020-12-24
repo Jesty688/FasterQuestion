@@ -103,9 +103,8 @@
             color="#00e0a1"
             @click="nextQs"
             v-ripple="{ class: 'white--text' }"
-          >
-            <v-icon small left color="#fff"> mdi-arrow-right </v-icon>
-            下一题
+            >下一题
+            <v-icon small right color="#fff"> mdi-arrow-right </v-icon>
           </v-chip>
           <v-chip
             style="color: #fff"
@@ -124,7 +123,7 @@
         <v-list-item ripple @click="showMoreQs">
           <v-list-item-content>
             <span class="wrapmore body-1">
-              {{ showMoreTitle }}
+              {{ currentIndex + 1 + ". " + showMoreTitle }}
               <!-- {{ currentIndex + 1 + showMoreTitle }} -->
             </span>
           </v-list-item-content>
@@ -134,9 +133,7 @@
       <!-- 显示更多内容(对应上面) -->
       <v-expand-transition>
         <div v-if="showMore">
-          <v-card-text class="px-4 py-1"
-            >Android操作系统手机，如何使用PC机给手机安装软件</v-card-text
-          >
+          <v-card-text class="px-4 py-1">{{ showMoreTitle }}</v-card-text>
           <v-divider class="mx-5"></v-divider>
         </div>
       </v-expand-transition>
@@ -146,7 +143,7 @@
           <v-radio-group v-model="selectedIndex" class="mt-0 pt-0">
             <div
               class="d-inline-flex align-center"
-              v-for="(item, index) in itemAs"
+              v-for="(item, index) of subject[currentIndex]"
               :key="index"
             >
               <div
@@ -156,7 +153,7 @@
                 mandatory
                 @click="selAns"
                 class="my-4"
-                :label="item.ans"
+                :label="item"
                 :value="index"
               ></v-radio>
             </div>
@@ -171,14 +168,15 @@
           >
           <v-expansion-panel-content>
             <div class="mb-4">
-              <span class="rb">正确答案:<code>A</code></span>
+              <span class="rb"
+                >正确答案:<code>{{
+                  itemAs[currentIndex] && itemAs[currentIndex]["答案"]
+                }}</code></span
+              >
             </div>
             <div class="mb-4">
               <span class="rb">解析:</span>
-              <code class="mr-4"
-                >12312323撒旦法撒旦法沙发撒旦法沙发士大夫撒旦法阿斯蒂芬撒旦法沙发上的发送到f安抚安抚阿萨德发送到符点数123123123123
-                暂无解析~</code
-              >
+              <code class="mr-4"> 暂无解析~</code>
               <v-chip
                 style="color: #2f495e"
                 color="#edf2f7"
@@ -235,13 +233,11 @@ export default {
       // itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
       selectedIndex: undefined, //答案选项默认选中项
       currentIndex: 0, //默认题目显示第一题
-
+      selfitemAs: [],
       doneItems: [], //以完成题目
     };
   },
-  mounted() {
-    console.log(this.doneData.hasDone);
-  },
+  mounted() {},
   //  接受父组件传的参数
   props: {
     // 接收 是否显示查看已完成题目对话框
@@ -257,10 +253,16 @@ export default {
     // 接收 显示答题时间
     times: {
       type: Number,
-      default: 10, //分钟为单位
+      default: 1200, //分钟为单位
     },
     // 接受题目列表
     itemAs: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    subject: {
       type: Array,
       default() {
         return [];
@@ -272,7 +274,7 @@ export default {
       default() {
         return {
           haveDone: 0,
-          have: 0,
+          has: 0,
         };
       },
     },
@@ -351,10 +353,16 @@ export default {
     },
     // 上一题
     prevQs() {
+      if (this.currentIndex - 1 < 0) return;
       this.currentIndex = this.currentIndex - 1;
     },
     //下一题
     nextQs() {
+      if (this.currentIndex + 1 > this.doneData.has) return;
+
+      this.$emit("getNextQs", 2);
+      console.log(this.itemAs);
+
       this.currentIndex = this.currentIndex + 1;
     },
     // 提交答案
@@ -369,7 +377,11 @@ export default {
   },
   computed: {
     showMoreTitle() {
-      return this.itemAs[this.currentIndex];
+      return this.itemAs[this.currentIndex] &&
+        this.itemAs[this.currentIndex].题目
+        ? this.itemAs[this.currentIndex].题目
+        : "正在加载...";
+      // return this.itemAs[this.currentIndex].题目;
     },
     showHaveTime: {
       get() {
@@ -393,6 +405,14 @@ export default {
       return this.selectedIndex;
     },
   },
+  // watch: {
+  //   itemAs: {
+  //     handler(val, oval) {
+  //       this.selfitemAs = val;
+  //       console.log(this.selfitemAs);
+  //     },
+  //   },
+  // },
 };
 </script>
 <style scoped>

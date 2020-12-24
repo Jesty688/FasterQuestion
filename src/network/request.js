@@ -18,6 +18,10 @@ export function request(config){
     })
     // 响应拦截
     instance.interceptors.response.use(res => {
+         
+        if(res.config.url.includes('/questionList/count/')){
+            return res.data.length
+        }
         return res.data
     } , err => {
         console.log(err)

@@ -23,9 +23,11 @@
     ) -->
     <item-sheet
       :itemAs="itemAs"
+      :subject="subject"
       :dialog.sync="showDialog"
       :showAns="true"
       :doneData.sync="doneData"
+      @getNextQs="getqItem"
     ></item-sheet>
   </v-container>
 </template>
@@ -33,7 +35,7 @@
 // 导入答题组件
 import itemSheet from "content/itemcard/AnswerSheet";
 // 导入此页面所有请求
-import { getQsType, getQsList } from "network/test";
+import { getQsType, getQsList, getQsCount } from "network/test";
 export default {
   name: "test",
   data() {
@@ -49,7 +51,8 @@ export default {
         has: 0,
       },
       showDialog: false,
-      itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
+      itemAs: [],
+      subject: [],
     };
   },
   components: {
@@ -58,15 +61,58 @@ export default {
   methods: {
     // 获取题型
     getqType() {
-      getQsType().then((data) => {
-        // console.log(data);
-        this.Qs.qType = data;
-        this.Qs.currqType = data[0];
+      getQsType()
+        .then((data) => {
+          // console.log(data);
+          this.Qs.qType = data;
+          this.Qs.currqType = data[0];
+          return getQsCount(this.Qs.currqType);
+        })
+        .then((data) => {
+          this.doneData.has = data;
+          this.getqItem(0);
+        });
+    },
+    getqCount(type) {
+      getQsCount(type).then((data) => {
+        this.doneData.has = data;
+      });
+    },
+    getqItem(page) {
+      getQsList(this.Qs.currqType, page).then((data) => {
+        // 这里先处理下数据在给组件
+        this.itemAs = data;
+        this.subject = [];
+        data.map((cur, index, arr) => {
+          let ob = {};
+          let items = Object.keys(data[index])
+            .join(" ")
+            .match(/[a-z]+/gi); //获取选项[A-Z]
+          for (let it of items) {
+            ob[it] = cur[it];
+          }
+          this.subject.push(ob);
+        });
       });
     },
   },
   mounted() {
+    // 获取题型和对应的题数
     this.getqType();
+    // 获取题型下的题目每次50条
+  },
+  watch: {
+    "Qs.currqType": {
+      handler(val, oldval) {
+        // 如果当前题型就是变更以后的就不需要获取请求
+        if (val !== oldval && oldval !== "") {
+          this.getqCount(val);
+          // 请求选项列表
+          this.getqItem(val, 0);
+        }
+      },
+      deep: true,
+    },
   },
 };
 </script>
