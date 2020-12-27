@@ -114,16 +114,18 @@ export default {
             data.length != 0
               ? (this.regForm.errMsg = "当前用户名已被使用")
               : // 用户名正常发送注册请求
-                toSignUp(this.regForm.username, this.regForm.passwd).then(
-                  (res) => {
+                toSignUp(this.regForm.username, this.regForm.passwd)
+                  .then((res) => {
                     if (res.hasOwnProperty("id")) {
                       this.regForm.errMsg = "";
                       this.toLogin();
                     } else {
                       this.regForm.errMsg = "注册失败咯";
                     }
-                  }
-                );
+                  })
+                  .catch((err) => {
+                    this.regForm.errMsg = "网络错误";
+                  });
           }))
         : (this.regForm.errMsg = "");
     },

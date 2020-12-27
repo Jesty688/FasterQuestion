@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "jserve": "json-server --watch Fq.json --port 6888 --routes routes.json"
+    "jserve": "json-server --watch Fq.json --port 6888 --host 0.0.0.0 --routes routes.json"
   },
   "dependencies": {
     "axios": "^0.21.0",

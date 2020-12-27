@@ -52,7 +52,7 @@ export default {
       },
       showDialog: false,
       itemAs: [],
-      subject: [],
+      subject: [], //格式化后的保存题目数组
     };
   },
   components: {
@@ -81,8 +81,11 @@ export default {
     getqItem(page) {
       getQsList(this.Qs.currqType, page).then((data) => {
         // 这里先处理下数据在给组件
-        this.itemAs = data;
-        this.subject = [];
+        data.sort((_) => {
+          return 0.5 - Math.random();
+        }); //打乱数组
+        this.itemAs = this.itemAs.concat(data);
+        //console.log(this.itemAs);
         data.map((cur, index, arr) => {
           let ob = {};
           let items = Object.keys(data[index])
@@ -93,6 +96,7 @@ export default {
           }
           this.subject.push(ob);
         });
+        //console.log(this.subject);
       });
     },
   },
@@ -102,10 +106,13 @@ export default {
     // 获取题型下的题目每次50条
   },
   watch: {
+    // 题型修改的时候 重新获取新题型的数量和题目
     "Qs.currqType": {
       handler(val, oldval) {
         // 如果当前题型就是变更以后的就不需要获取请求
         if (val !== oldval && oldval !== "") {
+          this.subject = [];
+          this.itemAs = [];
           this.getqCount(val);
           // 请求选项列表
           this.getqItem(val, 0);

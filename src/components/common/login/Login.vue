@@ -112,10 +112,9 @@ export default {
       this.loginForm.errMsg = "";
       this.$refs.loginforms.validate()
         ? ((this.loginForm.showLoadding = true),
-          toSignIn(this.loginForm.username, this.loginForm.passwd).then(
-            (res) => {
+          toSignIn(this.loginForm.username, this.loginForm.passwd)
+            .then((res) => {
               this.loginForm.showLoadding = false;
-              // console.log(res);
               if (res.length) {
                 // 登录成功
                 this.loginForm.errMsg = "";
@@ -130,8 +129,10 @@ export default {
               } else {
                 this.loginForm.errMsg = "用户名或密码错误";
               }
-            }
-          ))
+            })
+            .catch((err) => {
+              this.loginForm.errMsg = "网络错误";
+            }))
         : (this.loginForm.errMsg = "");
     },
     toRegister() {

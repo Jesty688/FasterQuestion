@@ -143,7 +143,7 @@
           <v-radio-group v-model="selectedIndex" class="mt-0 pt-0">
             <div
               class="d-inline-flex align-center"
-              v-for="(item, index) of subject[currentIndex]"
+              v-for="(item, index) in subject[currentIndex]"
               :key="index"
             >
               <div
@@ -161,8 +161,8 @@
         </div>
       </v-card-text>
       <!-- 查看正确答案 / 解析 / 提交个人解析 -->
-      <v-expansion-panels v-if="showAns" flat popout>
-        <v-expansion-panel>
+      <v-expansion-panels v-if="showAns" flat popout v-model="panel">
+        <v-expansion-panel style="background: #f6f6f6">
           <v-expansion-panel-header expand-icon="mdi-eye"
             >查看答案:</v-expansion-panel-header
           >
@@ -227,14 +227,13 @@ export default {
         progressValue: 0,
         isStart: false,
       },
-
+      panel: false, //不展开答案面板
       showMore: false,
-
-      // itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
+      curQsType: undefined, //当前题目类型
       selectedIndex: undefined, //答案选项默认选中项
       currentIndex: 0, //默认题目显示第一题
-      selfitemAs: [],
       doneItems: [], //以完成题目
+      curPage: 1, //当前页
     };
   },
   mounted() {},
@@ -273,7 +272,7 @@ export default {
       type: Object,
       default() {
         return {
-          haveDone: 0,
+          hasDone: 0,
           has: 0,
         };
       },
@@ -347,9 +346,19 @@ export default {
     showMoreQs() {
       this.showMore = !this.showMore;
     },
-    // 已做题目列表
-    selAns(index) {
-      console.log(this.selectedIndex);
+    // 点击答题列表
+    selAns() {
+      //console.log(this.selectedIndex);
+      //console.log(this.currentIndex);
+      // 保存当前选择的答案
+      this.doneItems[this.currentIndex] = {
+        ans: this.itemAs[this.currentIndex].答案,
+        curans: this.selectedIndex,
+        qid: this.itemAs[this.currentIndex].题号,
+      };
+      // 已完成题目加1
+      this.doneData.hasDone = this.doneItems.length;
+      console.dir(this.doneItems);
     },
     // 上一题
     prevQs() {
@@ -358,12 +367,17 @@ export default {
     },
     //下一题
     nextQs() {
+      // 防越界
       if (this.currentIndex + 1 > this.doneData.has) return;
-
-      this.$emit("getNextQs", 2);
-      console.log(this.itemAs);
-
-      this.currentIndex = this.currentIndex + 1;
+      // 如果该题型下的最大题目数和已经保存在题目数组中的长度一样就说明已经获取完成了不用发再送获取请求了
+      if (this.doneData.has !== this.subject.length)
+        // 根据当前的currentIndex所在题目下标 加载后续题目 这里设置的是50一次所以就%50
+        (this.currentIndex + 1) % 50 == 0
+          ? (this.$emit("getNextQs", ++this.curPage), console.log("请求一次"))
+          : null;
+      //console.log( this.subject);
+      this.panel = false;
+      ++this.currentInde;
     },
     // 提交答案
     submitAs() {},
@@ -377,6 +391,8 @@ export default {
   },
   computed: {
     showMoreTitle() {
+      //console.log(this.itemAs);
+
       return this.itemAs[this.currentIndex] &&
         this.itemAs[this.currentIndex].题目
         ? this.itemAs[this.currentIndex].题目
@@ -404,15 +420,27 @@ export default {
     roundedBars() {
       return this.selectedIndex;
     },
+    qsTypec() {
+      return this.itemAs[0] && this.itemAs[0].题型;
+    },
   },
-  // watch: {
-  //   itemAs: {
-  //     handler(val, oval) {
-  //       this.selfitemAs = val;
-  //       console.log(this.selfitemAs);
-  //     },
-  //   },
-  // },
+  watch: {
+    qsTypec: {
+      handler(val, oval) {
+        if (val !== undefined && this.curQsType !== val) {
+          this.curQsType = val;
+          this.doneItems = [];
+          this.doneData.hasDone = 0;
+          this.selectedIndex = undefined;
+          //console.log(this.curQsType);
+          // 初始化数据
+          this.currentIndex = 0;
+          this.curPage = 1;
+        }
+      },
+      deep: true,
+    },
+  },
 };
 </script>
 <style scoped>
