@@ -21,8 +21,8 @@
           <v-btn
             @click="listQs(n)"
             class="ma-1"
-            :class="n == 12 || n == 77 ? 'bgs' : ''"
-            v-for="n in 100"
+            :class="doneItems[n - 1] !== undefined ? 'bgs' : ''"
+            v-for="n in doneData.has"
             :key="n"
             elevation="0"
             color="#fff"
@@ -33,6 +33,22 @@
       </v-card>
     </v-dialog>
     <!-- 交卷提示 -->
+    <v-dialog v-model="submitd.dialog" persistent max-width="320">
+      <v-card>
+        <v-card-title class="headline"> {{ submitd.tipHd }} </v-card-title>
+        <v-card-text>{{ submitd.tipBd }} </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="submitd.dialog = false">
+            再看看
+          </v-btn>
+          <v-btn color="error darken-1" text @click="submitSureAs">
+            坚持交卷
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- 超时交卷 -->
     <v-snackbar
       color="#1A73E8"
       top
@@ -153,7 +169,7 @@
                 mandatory
                 @click="selAns"
                 class="my-4"
-                :label="item"
+                :label="item.toString()"
                 :value="index"
               ></v-radio>
             </div>
@@ -205,11 +221,23 @@
   </div>
 </template>
 <script>
+/**
+ * 未完成
+ * 1.保存当前答题记录
+ * 2.计时功能
+ * 3.完善提交功能
+ */
 export default {
   name: "AnswerSheet",
   data() {
     return {
       // 交卷提示
+      submitd: {
+        dialog: false,
+        tipHd: "",
+        tupBd: "",
+      },
+      // 超时交卷
       snackMsg: {
         submitPaper: false,
         submitMsg: "",
@@ -291,7 +319,7 @@ export default {
     },
     // 点击已做题目
     listQs(index) {
-      console.log(index);
+      this.currentIndex = index - 1;
       this.$emit("update:dialog", false);
     },
     // 题目跳转
@@ -301,12 +329,19 @@ export default {
        *  console.log(!isNaN(parseInt(this.qsInputs.qsValue))); 这样写有bug
        *  parseInt会把非数字的舍去  如111a 结果是111 但是a111结果是NaN 小细节
        */
-      !isNaN(Number(this.qsInputs.qsValue)) && this.qsInputs.qsValue.length != 0
+      !isNaN(Number(this.qsInputs.qsValue)) &&
+      this.qsInputs.qsValue.length != 0 &&
+      Number(this.qsInputs.qsValue) > 0
         ? ((this.qsInputs.errStatus = false),
           (this.qsInputs.errMsg = ""),
+          (this.currentIndex = parseInt(this.qsInputs.qsValue) - 1),
           (this.qsInputs.qsValue = ""),
-          (this.currentIndex = this.qsInputs.qsValue)) //跳转后清空输入框
-        : ((this.qsInputs.errStatus = true),
+          // 选中/未选中
+          this.doneItems[this.currentIndex] === undefined
+            ? (this.selectedIndex = undefined)
+            : (this.selectedIndex = this.doneItems[this.currentIndex].curans))
+        : //跳转后清空输入框
+          ((this.qsInputs.errStatus = true),
           (this.qsInputs.errMsg = "输入不能为空/只能是数字!"));
       //   console.log(!isNaN(Number(this.qsInputs.qsValue)));
     },
@@ -348,27 +383,29 @@ export default {
     },
     // 点击答题列表
     selAns() {
-      //console.log(this.selectedIndex);
-      //console.log(this.currentIndex);
       // 保存当前选择的答案
       this.doneItems[this.currentIndex] = {
         ans: this.itemAs[this.currentIndex].答案,
         curans: this.selectedIndex,
         qid: this.itemAs[this.currentIndex].题号,
       };
-      // 已完成题目加1
-      this.doneData.hasDone = this.doneItems.length;
-      console.dir(this.doneItems);
+      // 已完成题目加1 这里不能直接将数组的长度赋值 因为空数组也会算进去
+      // this.doneData.hasDone = this.doneItems.length;
+      this.doneData.hasDone = Object.keys(this.doneItems).length;
+      //console.dir(this.doneItems);
     },
     // 上一题
     prevQs() {
       if (this.currentIndex - 1 < 0) return;
-      this.currentIndex = this.currentIndex - 1;
+      --this.currentIndex;
+      this.doneItems[this.currentIndex] === undefined
+        ? (this.selectedIndex = undefined)
+        : (this.selectedIndex = this.doneItems[this.currentIndex].curans);
     },
     //下一题
     nextQs() {
       // 防越界
-      if (this.currentIndex + 1 > this.doneData.has) return;
+      if (this.currentIndex + 1 >= this.doneData.has) return;
       // 如果该题型下的最大题目数和已经保存在题目数组中的长度一样就说明已经获取完成了不用发再送获取请求了
       if (this.doneData.has !== this.subject.length)
         // 根据当前的currentIndex所在题目下标 加载后续题目 这里设置的是50一次所以就%50
@@ -377,10 +414,33 @@ export default {
           : null;
       //console.log( this.subject);
       this.panel = false;
-      ++this.currentInde;
+      ++this.currentIndex;
+      // 遍历下已完成的数组中有没有当前下标所对应的数据
+      this.doneItems[this.currentIndex] === undefined
+        ? (this.selectedIndex = undefined)
+        : (this.selectedIndex = this.doneItems[this.currentIndex].curans);
+      console.log(this.doneItems);
     },
     // 提交答案
-    submitAs() {},
+    submitAs() {
+      if (Object.keys(this.doneItems).length !== this.doneData.has) {
+        this.submitd.tipHd = "你还有未完成的题目!";
+        this.submitd.tipBd =
+          "还有" +
+          (this.doneData.has - Object.keys(this.doneItems).length) +
+          "题未完成~";
+      } else {
+        this.submitd.tipHd = "漂亮! 题目都被你KO啦";
+      }
+      this.submitd.dialog = true;
+    },
+    // 提交答案
+    submitSureAs() {
+      let score = this.doneItems.reduce((prev, cur, index, arr) => {
+        return cur.ans === cur.curans ? ++prev : prev;
+      }, 0);
+      console.log(score);
+    },
     personalIdeas() {},
     // 显示剩余
     showHavaTimes(count) {
@@ -422,6 +482,9 @@ export default {
     },
     qsTypec() {
       return this.itemAs[0] && this.itemAs[0].题型;
+    },
+    curdoneItems() {
+      return this.doneItems;
     },
   },
   watch: {
