@@ -22,8 +22,8 @@
         @closeDialog:dialog="changeDialog"
     ) -->
     <item-sheet
-      :itemAs="itemAs"
-      :subject="subject"
+      :itemAs.sync="itemAs"
+      :subject.sync="subject"
       :dialog.sync="showDialog"
       :showAns="true"
       :doneData.sync="doneData"

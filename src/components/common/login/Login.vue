@@ -126,6 +126,8 @@ export default {
                   "setAvater",
                   this.loginForm.username.substr(0, 1)
                 );
+                // this.$router.replace()
+                this.$router.replace('/rand')
               } else {
                 this.loginForm.errMsg = "用户名或密码错误";
               }

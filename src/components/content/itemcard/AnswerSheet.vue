@@ -218,14 +218,53 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </v-card>
+    <!-- 提交后分数显示 -->
+    <v-dialog v-model="getScore.dialog" persistent max-width="450">
+      <v-card class="popscore pa-4">
+        <v-btn icon color="error" class="closes" @click="scoreClose">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <div class="text-center">
+          <div class="text-h6">{{ getUname }}</div>
+          <div class="text-body-2 mb-4">{{ curQsType }}</div>
+          <v-avatar size="160" color="#fff" class="rounded-circle">
+            <img
+              src="../../../../public/jesty.jpeg"
+              style="width: 157px; height: 157px"
+            />
+          </v-avatar>
+          <div>
+            <v-row class="text-body-1 font-weight-medium">
+              <v-col cols="6"> 分数 </v-col>
+              <v-col> 用时 </v-col>
+
+              <v-col cols="6" class="text-h5 pa-0">
+                {{ getScore.scores }}
+              </v-col>
+              <v-col class="text-h5 pa-0">{{ costTimes }}</v-col>
+              <v-col cols="6">
+                <v-btn color="blue-grey" text class="ma-2 white--text">
+                  求鞭策
+                  <v-icon right dark> mdi-chevron-right </v-icon>
+                </v-btn>
+              </v-col>
+              <v-col
+                ><v-btn color="blue-grey" text class="ma-2 white--text">
+                  查看错题
+                  <v-icon right> mdi-chevron-right </v-icon>
+                </v-btn></v-col
+              >
+            </v-row>
+          </div>
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
 /**
- * 未完成
+ * NoFinished
  * 1.保存当前答题记录
- * 2.计时功能
- * 3.完善提交功能
  */
 export default {
   name: "AnswerSheet",
@@ -235,7 +274,13 @@ export default {
       submitd: {
         dialog: false,
         tipHd: "",
-        tupBd: "",
+        tipBd: "",
+      },
+      // 交卷得分
+      getScore: {
+        dialog: false,
+        scores: 0,
+        times: "",
       },
       // 超时交卷
       snackMsg: {
@@ -254,6 +299,7 @@ export default {
         time: null,
         progressValue: 0,
         isStart: false,
+        ts: null,
       },
       panel: false, //不展开答案面板
       showMore: false,
@@ -280,7 +326,7 @@ export default {
     // 接收 显示答题时间
     times: {
       type: Number,
-      default: 1200, //分钟为单位
+      default: 10, //分钟为单位
     },
     // 接受题目列表
     itemAs: {
@@ -322,6 +368,25 @@ export default {
       this.currentIndex = index - 1;
       this.$emit("update:dialog", false);
     },
+    // 初始化数据
+    initData() {
+      this.doneItems = [];
+      this.doneData.hasDone = 0;
+      this.selectedIndex = undefined;
+      this.currentIndex = 0;
+      this.curPage = 1;
+    },
+    // 初始化时间
+    initTime() {
+      this.ansTime.time = this.times;
+      this.ansTime.isStart = false;
+      this.ansTime.progressValue = 0;
+    },
+    // 关闭得分弹窗
+    scoreClose() {
+      this.getScore.dialog = false;
+      this.initTime();
+    },
     // 题目跳转
     gotoQs() {
       /**
@@ -353,7 +418,7 @@ export default {
       if (!this.ansTime.isStart) {
         this.ansTime.isStart = true; //开始计时
         console.log("答题开始");
-        let ts = setInterval((_) => {
+        this.ansTime.ts = setInterval((_) => {
           //console.log(this.ansTime.time);
           if (this.ansTime.time >= 0) {
             if (this.ansTime.sec > 0) {
@@ -365,10 +430,15 @@ export default {
                 this.showHavaTimes(count);
                 count += interval;
               } else {
-                console.log("结束了!");
+                console.log("结束!");
                 this.snackMsg.submitPaper = true;
                 this.snackMsg.submitMsg = "时间到!即将交卷";
-                clearInterval(ts);
+                setTimeout(() => {
+                  this.submitd.dialog = true;
+                  this.submitSureAs();
+                }, 2000);
+
+                clearInterval(this.ansTime.ts);
               }
             }
           }
@@ -383,6 +453,8 @@ export default {
     },
     // 点击答题列表
     selAns() {
+      // 点击答题选项 判断计时器是否已经开启了
+      !this.ansTime.isStart && this.startAs();
       // 保存当前选择的答案
       this.doneItems[this.currentIndex] = {
         ans: this.itemAs[this.currentIndex].答案,
@@ -410,7 +482,7 @@ export default {
       if (this.doneData.has !== this.subject.length)
         // 根据当前的currentIndex所在题目下标 加载后续题目 这里设置的是50一次所以就%50
         (this.currentIndex + 1) % 50 == 0
-          ? (this.$emit("getNextQs", ++this.curPage), console.log("请求一次"))
+          ? this.$emit("getNextQs", ++this.curPage)
           : null;
       //console.log( this.subject);
       this.panel = false;
@@ -419,7 +491,7 @@ export default {
       this.doneItems[this.currentIndex] === undefined
         ? (this.selectedIndex = undefined)
         : (this.selectedIndex = this.doneItems[this.currentIndex].curans);
-      console.log(this.doneItems);
+      //console.log(this.doneItems);
     },
     // 提交答案
     submitAs() {
@@ -431,6 +503,7 @@ export default {
           "题未完成~";
       } else {
         this.submitd.tipHd = "漂亮! 题目都被你KO啦";
+        this.submitd.tipBd = "";
       }
       this.submitd.dialog = true;
     },
@@ -439,8 +512,16 @@ export default {
       let score = this.doneItems.reduce((prev, cur, index, arr) => {
         return cur.ans === cur.curans ? ++prev : prev;
       }, 0);
-      console.log(score);
+      this.submitd.dialog = false;
+      this.getScore.dialog = true; //显示弹窗
+      this.getScore.scores = score;
+      this.initData();
+      clearInterval(this.ansTime.ts);
+      this.$emit("update:itemAs", []);
+      this.$emit("update:subject", []);
+      this.$emit("getNextQs", this.curPage);
     },
+
     personalIdeas() {},
     // 显示剩余
     showHavaTimes(count) {
@@ -474,6 +555,11 @@ export default {
         return "点击开始";
       },
     },
+    costTimes() {
+      return this.times - this.ansTime.time < 0
+        ? `0${this.times - this.ansTime.time}:${this.ansTime.sec}`
+        : `${this.times - this.ansTime.time}:${this.ansTime.sec}`;
+    },
     showIcon() {
       return this.showMore ? "mdi-chevron-up" : "mdi-chevron-down";
     },
@@ -486,19 +572,16 @@ export default {
     curdoneItems() {
       return this.doneItems;
     },
+    getUname() {
+      return window.sessionStorage.getItem("userName");
+    },
   },
   watch: {
     qsTypec: {
       handler(val, oval) {
         if (val !== undefined && this.curQsType !== val) {
           this.curQsType = val;
-          this.doneItems = [];
-          this.doneData.hasDone = 0;
-          this.selectedIndex = undefined;
-          //console.log(this.curQsType);
-          // 初始化数据
-          this.currentIndex = 0;
-          this.curPage = 1;
+          this.initData();
         }
       },
       deep: true,
@@ -507,6 +590,15 @@ export default {
 };
 </script>
 <style scoped>
+.closes {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.popscore {
+  background-color: #ebeffe;
+  color: #2b7a7f;
+}
 .bgcgy {
   background-color: #f6f6f6;
 }

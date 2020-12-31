@@ -44,38 +44,14 @@
     document.getElementById('close').addEventListener('click', function() {
       inst.close()
     })
-    let obj = [
-      {
-        A: '主机、键盘和显示器',
-        B: '系统软件和应用软件',
-        C: '主机和它的外部设备',
-        D: '硬件系统和软件系统',
-        答案: 'D',
-        题号: 51,
-        题型: '应用基础',
-        题目: '通常人们所说的一个完整的计算机系统应',
-      },
-      {
-        A: 'di地2222',
-        B: '信息bbb',
-        C: '师德师风cc',
-        D: '觉得反感DDD',
-        答案: 'D',
-        题号: 1,
-        题型: '应用基础',
-        题目: '我是IM2速度快放假阿里2统应',
-      },
-    ]
-    // 解构
-    let iteme = ['A', 'B', 'C', 'D']
-    let is = []
-    obj.map((cur, index, arr) => {
-      let ob = {}
-      for (let it of iteme) {
-        ob[it] = cur[it]
-      }
-      is.push(ob)
-      console.log(is)
-    })
+    // 120:59
+    let min = 3
+    let sec = 59
+    let ts = setInterval(() => {
+      if (min < 0) return
+      if (sec-- <= 0) --min < 0 ? (min = 0) : (sec = 59)
+
+      console.log(min, sec)
+    }, 10)
   </script>
 </html>
