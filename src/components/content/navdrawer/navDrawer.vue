@@ -42,6 +42,7 @@
           v-for="item in items.prtItems"
           :key="item.text"
           :to="item.route"
+          :disabled="item.dis"
         >
           <v-list-item-icon>
             <v-icon dense v-text="item.icon"></v-icon>
@@ -88,9 +89,24 @@ export default {
           { text: "模拟测试", route: "/test" },
         ],
         prtItems: [
-          { text: "收藏集合", icon: "mdi-tag-heart", route: "/collection" },
-          { text: "错题集合", icon: "mdi-flag-variant", route: "/wronglist" },
-          { text: "答题排行", icon: "mdi-summit", route: "/ranking" },
+          {
+            text: "收藏集合",
+            icon: "mdi-tag-heart",
+            route: "/collection",
+            dis: true,
+          },
+          {
+            text: "错题集合",
+            icon: "mdi-flag-variant",
+            route: "/wronglist",
+            dis: false,
+          },
+          {
+            text: "答题排行",
+            icon: "mdi-summit",
+            route: "/ranking",
+            dis: true,
+          },
         ],
         userItem: [
           // earth earth-arrow-right police-badge police-badge-outline

@@ -63,7 +63,7 @@
       <!-- 答题进度 -->
       <v-row class="d-flex flex-column ma-0">
         <v-col>
-          <v-chip class="alphabgc">
+          <v-chip class="alphabgc" @click="keepHistory">
             <v-icon left color="primary">mdi-image-filter-drama</v-icon>
             保存当前作答记录
           </v-chip>
@@ -266,6 +266,15 @@
  * NoFinished
  * 1.保存当前答题记录
  */
+import { setErrQs, getErrQs } from "network/wrong";
+import { checkUserName } from "network/sign";
+// checkUserName(window.sessionStorage.getItem("userName")).then((udata) => {
+
+// });
+// setErrQs1(window.sessionStorage.getItem("uid")).then((res) => {
+//   console.log(res);
+// });
+
 export default {
   name: "AnswerSheet",
   data() {
@@ -308,6 +317,7 @@ export default {
       currentIndex: 0, //默认题目显示第一题
       doneItems: [], //以完成题目
       curPage: 1, //当前页
+      errCollect: [], //错题集合
     };
   },
   mounted() {},
@@ -371,6 +381,7 @@ export default {
     // 初始化数据
     initData() {
       this.doneItems = [];
+      this.errCollect = [];
       this.doneData.hasDone = 0;
       this.selectedIndex = undefined;
       this.currentIndex = 0;
@@ -381,6 +392,14 @@ export default {
       this.ansTime.time = this.times;
       this.ansTime.isStart = false;
       this.ansTime.progressValue = 0;
+    },
+    // 保存当前答题记录
+    keepHistory() {
+      console.log(JSON.parse(window.sessionStorage.getItem("ansHistory")));
+      // window.sessionStorage.setItem(
+      //   "ansHistory",
+      //   JSON.stringify(this.doneItems)
+      // );
     },
     // 关闭得分弹窗
     scoreClose() {
@@ -459,7 +478,12 @@ export default {
       this.doneItems[this.currentIndex] = {
         ans: this.itemAs[this.currentIndex].答案,
         curans: this.selectedIndex,
+        title: this.itemAs[this.currentIndex].题目,
         qid: this.itemAs[this.currentIndex].题号,
+        anstitle: this.itemAs[this.currentIndex][
+          this.itemAs[this.currentIndex].答案
+        ],
+        curanstitle: this.itemAs[this.currentIndex][this.selectedIndex],
       };
       // 已完成题目加1 这里不能直接将数组的长度赋值 因为空数组也会算进去
       // this.doneData.hasDone = this.doneItems.length;
@@ -510,12 +534,63 @@ export default {
     // 提交答案
     submitSureAs() {
       let score = this.doneItems.reduce((prev, cur, index, arr) => {
-        return cur.ans === cur.curans ? ++prev : prev;
+        // 计算得分   --                          收集错题
+        return cur.ans === cur.curans
+          ? ++prev
+          : (this.errCollect.push(cur), prev);
       }, 0);
+      // console.table(this.errCollect);
+      if (this.errCollect.length != 0) {
+        let er = this.errCollect;
+        er.push(Date.parse(new Date()));
+        // getErrCount()
+        //   .then((res) => {
+        //     if (res.length >= 7) {
+        //       // 删除数组对象最开始的一个数据
+        //       deletErrQs(res[0].id).then((dres) => {
+        //         setErrQs(Date.parse(new Date()), er).then((rs) => {
+        //           // console.log(rs);
+        //         });
+        //       });
+        //     } else
+        //       setErrQs(Date.parse(new Date()), er).then((rs) => {
+        //         // console.log(rs);
+        //       });
+        //   })
+        //   .catch((err) => {});
+        checkUserName(window.sessionStorage.getItem("userName")).then(
+          (udata) => {
+            //大于的话删除最前面的错题 否则就直接添加
+            if (udata[0].errCollect.length >= 7) {
+              udata[0].errCollect.shift();
+              udata[0].errCollect.push(er);
+              //console.log(udata);
+              setErrQs(window.sessionStorage.getItem("uid"), udata[0]).then(
+                (res) => {
+                  console.log(res);
+                }
+              );
+            } else {
+              udata[0].errCollect.push(er);
+              setErrQs(window.sessionStorage.getItem("uid"), udata[0]).then(
+                (res) => {
+                  console.log(res);
+                }
+              );
+            }
+          }
+        );
+      }
+      // setErrQs(Date.parse(new Date()), this.errCollect).then((res) => {
+      //   console.log(res);
+      // });
+
       this.submitd.dialog = false;
       this.getScore.dialog = true; //显示弹窗
       this.getScore.scores = score;
       this.initData();
+      // 清除之前保存的答题记录(没思路 有bug)
+      window.sessionStorage.setItem("ansHistory", "");
       clearInterval(this.ansTime.ts);
       this.$emit("update:itemAs", []);
       this.$emit("update:subject", []);

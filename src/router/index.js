@@ -31,32 +31,50 @@ const routes = [
     {
         path:'/rand',
         component:Rand,
-        name:'rand'
+        name:'rand',
+        meta:{
+            keepAlive:true
+        }
     },
     {
         path:'/test',
         name:'test',
-        component:Test
+        component:Test,
+        meta:{
+            keepAlive:true
+        }
 
     },
     {
         path:'/wronglist',
         name:'wronglist',
         component:wrongList,
+        meta:{
+            keepAlive:false
+        }
     },
     {
         path:'/collection',
         name:'collection',
-        component:collectList
+        component:collectList,
+        meta:{
+            keepAlive:true
+        }
     },{
         path:'/ranking',
         name:'rank',
-        component:Rank
+        component:Rank,
+        meta:{
+            keepAlive:true
+        }
     },
     {
         path:'/users',
         name:'user',
-        component:User
+        component:User,
+        meta:{
+            keepAlive:true
+        }
 
     }
     
@@ -75,7 +93,7 @@ router.beforeEach((to , from , next) => {
         return cur === to.name
     })
     // 
-    if(hasLogin){
+    if(hasLogin){  
         //如果当前页面需要登录的话先判断是否已经是登录 在vuex中查询登录状态
         //未登录出现提示信息 路由跳转到user页面
         if(!store.state.loginStatus.userName && !store.state.loginStatus.token){

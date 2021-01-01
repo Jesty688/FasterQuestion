@@ -126,8 +126,10 @@ export default {
                   "setAvater",
                   this.loginForm.username.substr(0, 1)
                 );
+                // 保存用户id在session中
+                window.sessionStorage.setItem("uid", res[0].id);
                 // this.$router.replace()
-                this.$router.replace('/rand')
+                this.$router.replace("/rand");
               } else {
                 this.loginForm.errMsg = "用户名或密码错误";
               }

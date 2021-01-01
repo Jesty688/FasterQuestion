@@ -3,7 +3,7 @@ import axios from 'axios'
 export function request(config){
     // 实例化axios 并且配置相关信息
     const instance = new axios.create({
-        baseURL:'http://127.0.0.1:6888',
+        baseURL:'http://192.168.2.107:6888',
         timeout:5000,
         headers:{
             // 'Content-Type':'application/x-www-form-urlencoded'

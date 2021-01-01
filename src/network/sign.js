@@ -21,7 +21,8 @@ export function toSignUp(username , pwd){
             oneWord: "",
             school: "",
             userHome: "",
-            fllow: []
+            fllow: [],
+            errCollect:[]
         }
     })
 }

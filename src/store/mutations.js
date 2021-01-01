@@ -19,11 +19,17 @@ const mutations = {
         state.loginStatus.userName = uname;
         window.sessionStorage.setItem('userName' , uname)
     },
+    // 保存答题记录
+    setAnsHistory(state , item){
+        state.loginStatus.ansHistory = item;
+        window.sessionStorage.setItem('ansHistory' , item)
+    }, 
     // 清楚所有sessionStorage
     sessionClear(state){
        this.commit('setAvater' , '')
        this.commit('setUsername' , '')
        state.loginStatus.token = ""
+       window.sessionStorage.clear();
     }
 }
 export default mutations
