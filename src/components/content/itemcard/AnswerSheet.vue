@@ -78,6 +78,7 @@
             已完成 {{ doneData.hasDone }} / {{ doneData.has }}
           </v-chip>
           <v-text-field
+            v-if="this.ansTime.isStart"
             append-icon="mdi-arrow-right"
             class="d-inline-flex ml-4"
             label="跳转题号"
@@ -336,7 +337,7 @@ export default {
     // 接收 显示答题时间
     times: {
       type: Number,
-      default: 10, //分钟为单位
+      default: 120, //分钟为单位
     },
     // 接受题目列表
     itemAs: {
@@ -395,7 +396,7 @@ export default {
     },
     // 保存当前答题记录
     keepHistory() {
-      console.log(JSON.parse(window.sessionStorage.getItem("ansHistory")));
+      // console.log(JSON.parse(window.localStorage.getItem("ansHistory")));
       // window.sessionStorage.setItem(
       //   "ansHistory",
       //   JSON.stringify(this.doneItems)
@@ -415,7 +416,8 @@ export default {
        */
       !isNaN(Number(this.qsInputs.qsValue)) &&
       this.qsInputs.qsValue.length != 0 &&
-      Number(this.qsInputs.qsValue) > 0
+      Number(this.qsInputs.qsValue) > 0 &&
+      Number(this.qsInputs.qsValue) <= this.subject.length
         ? ((this.qsInputs.errStatus = false),
           (this.qsInputs.errMsg = ""),
           (this.currentIndex = parseInt(this.qsInputs.qsValue) - 1),
@@ -461,7 +463,7 @@ export default {
               }
             }
           }
-        }, 10);
+        }, 1000);
       } else {
         console.log("无法重复点击");
       }
@@ -492,6 +494,8 @@ export default {
     },
     // 上一题
     prevQs() {
+      // 点击答题选项 判断计时器是否已经开启了
+      !this.ansTime.isStart && this.startAs();
       if (this.currentIndex - 1 < 0) return;
       --this.currentIndex;
       this.doneItems[this.currentIndex] === undefined
@@ -500,14 +504,18 @@ export default {
     },
     //下一题
     nextQs() {
+      // 点击答题选项 判断计时器是否已经开启了
+      !this.ansTime.isStart && this.startAs();
       // 防越界
+      // console.log(this.doneData.has, this.subject.length);
       if (this.currentIndex + 1 >= this.doneData.has) return;
       // 如果该题型下的最大题目数和已经保存在题目数组中的长度一样就说明已经获取完成了不用发再送获取请求了
-      if (this.doneData.has !== this.subject.length)
+      if (this.doneData.has !== this.subject.length) {
         // 根据当前的currentIndex所在题目下标 加载后续题目 这里设置的是50一次所以就%50
         (this.currentIndex + 1) % 50 == 0
-          ? this.$emit("getNextQs", ++this.curPage)
+          ? (this.$emit("getNextQs", ++this.curPage), console.log(111))
           : null;
+      }
       //console.log( this.subject);
       this.panel = false;
       ++this.currentIndex;
@@ -543,54 +551,33 @@ export default {
       if (this.errCollect.length != 0) {
         let er = this.errCollect;
         er.push(Date.parse(new Date()));
-        // getErrCount()
-        //   .then((res) => {
-        //     if (res.length >= 7) {
-        //       // 删除数组对象最开始的一个数据
-        //       deletErrQs(res[0].id).then((dres) => {
-        //         setErrQs(Date.parse(new Date()), er).then((rs) => {
-        //           // console.log(rs);
-        //         });
-        //       });
-        //     } else
-        //       setErrQs(Date.parse(new Date()), er).then((rs) => {
-        //         // console.log(rs);
-        //       });
-        //   })
-        //   .catch((err) => {});
-        checkUserName(window.sessionStorage.getItem("userName")).then(
-          (udata) => {
-            //大于的话删除最前面的错题 否则就直接添加
-            if (udata[0].errCollect.length >= 7) {
-              udata[0].errCollect.shift();
-              udata[0].errCollect.push(er);
-              //console.log(udata);
-              setErrQs(window.sessionStorage.getItem("uid"), udata[0]).then(
-                (res) => {
-                  console.log(res);
-                }
-              );
-            } else {
-              udata[0].errCollect.push(er);
-              setErrQs(window.sessionStorage.getItem("uid"), udata[0]).then(
-                (res) => {
-                  console.log(res);
-                }
-              );
-            }
+        checkUserName(window.localStorage.getItem("userName")).then((udata) => {
+          //大于的话删除最前面的错题 否则就直接添加
+          if (udata[0].errCollect.length >= 7) {
+            udata[0].errCollect.shift();
+            udata[0].errCollect.push(er);
+            //console.log(udata);
+            setErrQs(window.localStorage.getItem("uid"), udata[0]).then(
+              (res) => {
+                //console.log(res);
+              }
+            );
+          } else {
+            udata[0].errCollect.push(er);
+            setErrQs(window.localStorage.getItem("uid"), udata[0]).then(
+              (res) => {
+                //console.log(res);
+              }
+            );
           }
-        );
+        });
       }
-      // setErrQs(Date.parse(new Date()), this.errCollect).then((res) => {
-      //   console.log(res);
-      // });
-
       this.submitd.dialog = false;
       this.getScore.dialog = true; //显示弹窗
       this.getScore.scores = score;
       this.initData();
       // 清除之前保存的答题记录(没思路 有bug)
-      window.sessionStorage.setItem("ansHistory", "");
+      window.localStorage.removeItem("ansHistory");
       clearInterval(this.ansTime.ts);
       this.$emit("update:itemAs", []);
       this.$emit("update:subject", []);
@@ -642,13 +629,16 @@ export default {
       return this.selectedIndex;
     },
     qsTypec() {
-      return this.itemAs[0] && this.itemAs[0].题型;
+      // 简单解决bug 显示模拟测试 还是随机测试的题型
+      return this.itemAs[0] && this.itemAs[0].题型 === this.itemAs[1].题型
+        ? this.itemAs[0].题型
+        : "模拟测试";
     },
     curdoneItems() {
       return this.doneItems;
     },
     getUname() {
-      return window.sessionStorage.getItem("userName");
+      return window.localStorage.getItem("userName");
     },
   },
   watch: {

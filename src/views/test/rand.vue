@@ -3,7 +3,7 @@
     <!-- 顶部提示 -->
     <div class="font_color">
       <h2>Hello,</h2>
-      <h2>Suchs Jesty.👋</h2>
+      <h2>{{ $store.state.loginStatus.userName }}.👋</h2>
     </div>
     <!-- 题型选择 -->
     <v-col class="d-flex pa-0" cols="12" sm="2">

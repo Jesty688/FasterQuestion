@@ -113,8 +113,8 @@ export default {
           {
             text: "个人资料",
             icon: "mdi-account",
-            route: "/users",
-            isShow: false,
+            route: `/user/${window.localStorage.getItem("uid")}`,
+            isShow: this.$store.state.loginStatus.userName ? true : false,
           },
           {
             text: "人脉",

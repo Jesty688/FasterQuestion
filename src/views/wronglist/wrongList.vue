@@ -80,9 +80,9 @@ export default {
     };
   },
   mounted() {
-    getErrQs(window.sessionStorage.getItem("uid")).then((res) => {
+    getErrQs(window.localStorage.getItem("uid")).then((res) => {
       this.errItems = res.errCollect;
-      //console.log(this.errItems[0][this.errItems[0].length - 1]);
+      //console.log(this.errItems);
     });
   },
   methods: {

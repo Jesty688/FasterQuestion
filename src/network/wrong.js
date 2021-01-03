@@ -8,9 +8,10 @@ function setErrQs(id , dt){
         data:{
             username:dt.username,
             pwd:dt.pwd,
+            avaurl:dt.avaurl,
             area: dt.area,
             introduce: dt.introduce,
-            oneWord: dt.introduce,
+            oneWord: dt.oneWord,
             school: dt.school,
             userHome: dt.userHome,
             fllow: dt.fllow,

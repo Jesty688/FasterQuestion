@@ -116,6 +116,8 @@ export default {
             .then((res) => {
               this.loginForm.showLoadding = false;
               if (res.length) {
+                console.log(res[0].avaurl);
+
                 // 登录成功
                 this.loginForm.errMsg = "";
                 this.$emit("update:isLogin", false);
@@ -124,10 +126,11 @@ export default {
                 this.$store.commit("setUsername", this.loginForm.username);
                 this.$store.commit(
                   "setAvater",
-                  this.loginForm.username.substr(0, 1)
+                  // this.loginForm.username.substr(0, 1)
+                  res[0].avaurl
                 );
-                // 保存用户id在session中
-                window.sessionStorage.setItem("uid", res[0].id);
+                // 保存用户id在本地数据中
+                window.localStorage.setItem("uid", res[0].id);
                 // this.$router.replace()
                 this.$router.replace("/rand");
               } else {

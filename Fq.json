@@ -3,42 +3,58 @@
     {
       "username": "Jesty",
       "pwd": "fq8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92scjs",
+      "avaurl": "https://q1.qlogo.cn/g?b=qq&nk=1980963713&src_uin=www.jlwz.cn&s=0",
       "area": "",
       "introduce": "",
-      "oneWord": "",
+      "oneWord": "唔...我们一定会在月亮上相遇!🌕",
       "school": "",
       "userHome": "",
       "fllow": [],
       "errCollect": [
         [
           {
-            "ans": "C",
-            "curans": "A",
-            "title": "下面哪个工具可以减少图像的饱和度( )",
-            "qid": 894,
-            "anstitle": "海绵工具 ",
-            "curanstitle": "加深工具"
+            "ans": "A",
+            "curans": "C",
+            "title": "测试题库1",
+            "qid": 5000,
+            "anstitle": 1,
+            "curanstitle": 10
+          },
+          {
+            "ans": "B",
+            "curans": "C",
+            "title": "测试题库3",
+            "qid": 5002,
+            "anstitle": 9,
+            "curanstitle": 10
           },
           {
             "ans": "B",
             "curans": "A",
-            "title": "（ )不是MPC对音频处理能力的基本要求。",
-            "qid": 938,
-            "anstitle": "保存大容量声波信号",
-            "curanstitle": "录入声波信号"
+            "title": "测试题库2",
+            "qid": 5001,
+            "anstitle": 9,
+            "curanstitle": 1
           },
-          {
-            "ans": "C",
-            "curans": "A",
-            "title": "下列哪种色彩模式是不依赖于设备的：( )",
-            "qid": 901,
-            "anstitle": "Lab",
-            "curanstitle": "RGB"
-          },
-          1609504030000
+          1609664867000
         ]
       ],
       "id": 1
+    },
+    {
+      "username": "zhenhang",
+      "pwd": "fq8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92scjs",
+      "avaurl": "https://imgavater.ui.cn/avatar/max.png",
+      "area": "",
+      "introduce": "",
+      "oneWord": "思Hua~🌼",
+      "school": "",
+      "userHome": "",
+      "fllow": [
+        1
+      ],
+      "errCollect": [],
+      "id": 2
     }
   ],
   "questionList": [

@@ -8,28 +8,28 @@ const mutations = {
         // 这里也不是算直接吧 state是间接的获取sessionStorage中的值 然后这个地方修改了
         // 没有经过state自然是不会响应式更新的 所以这里先直接经过state直接修改这3个值
         const token = Math.ceil(Math.random()*1000000)
-        window.sessionStorage.setItem('token' , window.btoa(token))
+        window.localStorage.setItem('token' , window.btoa(token))
         state.loginStatus.token = token
     },
     setAvater(state , url){
         state.loginStatus.avaterUrl = url;
-        window.sessionStorage.setItem('avaterUrl' , url)
+        window.localStorage.setItem('avaterUrl' , url)
     },
     setUsername(state , uname){
         state.loginStatus.userName = uname;
-        window.sessionStorage.setItem('userName' , uname)
+        window.localStorage.setItem('userName' , uname)
     },
     // 保存答题记录
     setAnsHistory(state , item){
         state.loginStatus.ansHistory = item;
-        window.sessionStorage.setItem('ansHistory' , item)
+        window.localStorage.setItem('ansHistory' , item)
     }, 
     // 清楚所有sessionStorage
     sessionClear(state){
        this.commit('setAvater' , '')
        this.commit('setUsername' , '')
        state.loginStatus.token = ""
-       window.sessionStorage.clear();
+       window.localStorage.clear();
     }
 }
 export default mutations

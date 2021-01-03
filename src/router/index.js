@@ -23,6 +23,7 @@ const wrongList = () => import('views/wronglist/wrongList')         //错题集�
 const collectList = () => import('views/collectlist/collectList')   //收藏集合
 const Rank = () => import('views/rank/ranking')
 const User = () => import('views/users/user')
+const userInfo = ()=> import('views/users/userInfo');
 const routes = [
     {
         path:'/',
@@ -76,7 +77,16 @@ const routes = [
             keepAlive:true
         }
 
+    },
+    {
+        path:'/user/:id',
+        name:'userinfo',
+        component:userInfo,
+        meta:{
+            keepAlive:true
+        }
     }
+    
     
 ];
 
@@ -107,4 +117,5 @@ router.beforeEach((to , from , next) => {
 })
 
 export default router
+
 

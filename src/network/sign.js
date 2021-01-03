@@ -16,6 +16,7 @@ export function toSignUp(username , pwd){
         data:{
             username,
             pwd:'fq' + encryptoSha256(pwd) + 'scjs',
+            avaurl:'https://imgavater.ui.cn/avatar/max.png',
             area: "",
             introduce: "",
             oneWord: "",

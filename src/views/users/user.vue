@@ -6,34 +6,38 @@
       <v-col cols="12"
         ><v-subheader class="pa-0 ml-3">人员推荐</v-subheader></v-col
       >
-      <v-col v-for="n in 7" :key="n" cols="6" sm="4" md="3" lg="3">
+      <v-col v-for="(v, i) in users" :key="i" cols="6" sm="4" md="3" lg="3">
         <v-card
           outlined
           class="mb-2 rounded-lg"
-          :class="n % 2 == 0 ? 'odd' : 'even'"
+          :class="i % 2 == 0 ? 'odd' : 'even'"
         >
           <a
-            href="javascript:;"
+            :href="'/user/' + v.id"
             class="iteminfo"
             v-ripple="{ class: `secondary--text` }"
           >
             <!-- 用户头像 -->
-            <v-avatar rounded class="items" size="96">
-              <img
-                alt="User"
-                class="rounded-circle avatar"
-                src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1705736635,478851034&fm=11&gp=0.jpg"
-              />
+            <v-avatar rounded class="items rounded-circle" size="96">
+              <img alt="User" class="rounded-circle avatar" :src="v.avaurl" />
             </v-avatar>
             <!-- 用户名 -->
-            <div class="username pubs">Arects</div>
-            <div class="headline pubs">软件工程大学生</div>
+            <div class="username pubs">{{ v.username }}</div>
+            <div class="headline pubs">{{ v.oneWord }}</div>
           </a>
 
           <!-- 点击按钮 -->
           <v-card-actions class="pl-4">
-            <v-btn icon style="border: 1px solid rgba(0, 0, 0, 0.12)">
-              <v-icon>mdi-star-outline</v-icon>
+            <v-btn
+              v-if="v.username !== $store.state.loginStatus.userName"
+              icon
+              style="border: 1px solid rgba(0, 0, 0, 0.12)"
+              @click="addClt(v.id)"
+            >
+              <v-icon
+                :color="showAction(v) ? 'primary' : ''"
+                v-text="showAction(v) ? 'mdi-star' : 'mdi-star-outline'"
+              ></v-icon>
             </v-btn>
             <v-spacer></v-spacer>
             <v-btn icon>
@@ -43,8 +47,8 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <div class="d-flex justify-center align-center">
+    <!-- 加载更多 -->
+    <div v-if="false" class="d-flex justify-center align-center">
       <div class="loadmore mt-2" @click="loadMore">加载更多</div>
       <v-progress-circular
         class="mt-2"
@@ -56,14 +60,82 @@
 </template>
 
 <script>
+import { getUsers } from "network/user";
+// 应该写一个公用的请求接口 我没写 那就直接用其他模块的请求吧
+import { setErrQs } from "network/wrong";
 export default {
   data() {
-    return {};
+    return {
+      users: [],
+      selfInfo: [],
+      showAddicon: false,
+    };
   },
   methods: {
+    // 初始化数据
     loadMore() {
       alert(1);
     },
+    // 获取用户列表
+    getUserList() {
+      getUsers().then((res) => {
+        this.users = res;
+        this.selfInfo = res.filter((cur) => {
+          return cur.id == window.localStorage.getItem("uid");
+        });
+        //console.log(this.users);
+      });
+    },
+    // 添加关注
+    addClt(id) {
+      //console.log(this.$store.state.loginStatus);
+      if (
+        !this.$store.state.loginStatus.token &&
+        !this.$store.state.loginStatus.userName
+      ) {
+        this.$store.commit("triggerTip", true);
+        return;
+      }
+      // 遍历用户信息中是否当前关注的用户 如果有该次点击就移出关注用户 反之添加
+      let rs = this.selfInfo[0].fllow.some((cur) => {
+        return cur == id;
+      });
+      rs
+        ? (this.selfInfo[0].fllow = this.selfInfo[0].fllow.filter((cur) => {
+            return cur != id;
+          }))
+        : this.selfInfo[0].fllow.push(id);
+      //console.log(this.selfInfo[0]);
+
+      setErrQs(this.selfInfo[0].id, this.selfInfo[0]).then((res) => {
+        //console.log(res);
+        this.showAddicon = !this.showAddicon;
+      });
+    },
+    initData() {
+      this.selfInfo = [];
+      this.showAddicon = false;
+    },
+  },
+  mounted() {
+    //加载用户列表
+    this.getUserList();
+  },
+  computed: {
+    showAction() {
+      return (v) => {
+        if (this.selfInfo.length == 0) return false;
+        return (this.showAddicon = this.selfInfo[0].fllow.some(
+          (cur) => cur == v.id
+        ));
+      };
+    },
+  },
+  watch: {
+    "$store.state.loginStatus.token": function (val) {
+      val ? this.getUserList() : this.initData();
+    },
+    //deep: true,
   },
 };
 </script>

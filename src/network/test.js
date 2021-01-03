@@ -23,3 +23,9 @@ export function getQsCount(type){
         url:`/questionList/count/${type}`
     })
 }
+export function getQsAll(){
+    return request({
+        method:'GET',
+        url:'/questionList'
+    })
+}

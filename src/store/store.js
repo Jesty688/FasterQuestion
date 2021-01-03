@@ -1,9 +1,9 @@
 const state = {
     loginStatus:{
-        userName:window.sessionStorage.getItem('userName'),
-        token:window.sessionStorage.getItem('token'),
-        avaterUrl:window.sessionStorage.getItem('avaterUrl'),
-        ansHistory:window.sessionStorage.getItem('ansHistory'),
+        userName:window.localStorage.getItem('userName'),
+        token:window.localStorage.getItem('token'),
+        avaterUrl:window.localStorage.getItem('avaterUrl'),
+        ansHistory:window.localStorage.getItem('ansHistory'),
         loginTip:false
     }
 }

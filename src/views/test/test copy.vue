@@ -3,13 +3,12 @@
     <!-- 顶部提示 -->
     <div class="font_color">
       <h2>Hello,</h2>
-      <h2>{{ $store.state.loginStatus.userName }}.👋</h2>
+      <h2>Suchs Jesty.👋</h2>
     </div>
     <!-- 题型选择 -->
     <v-col class="d-flex pa-0" cols="12" sm="2">
       <v-select
-        :items="Qs.qType"
-        v-model="Qs.currqType"
+        :items="['Java', 'C++', '计算机基础']"
         label="题型选择"
         append-icon="mdi-shape"
         menu-props="auto, overflowX"
@@ -22,68 +21,25 @@
         @closeDialog:dialog="changeDialog"
     ) -->
     <item-sheet
-      :itemAs.sync="itemAs"
-      :subject.sync="subject"
+      :itemAs="itemAs"
       :dialog.sync="showDialog"
       :showAns="false"
-      :doneData.sync="doneData"
-      :times="120"
-      @getNextQs="getqItem"
     ></item-sheet>
   </v-container>
 </template>
 <script>
 // 导入答题组件
 import itemSheet from "content/itemcard/AnswerSheet";
-// 导入此页面所有请求
-import { getQsList, getQsCount, getQsAll } from "network/test";
 export default {
   name: "test",
   data() {
     return {
-      //题型
-      Qs: {
-        currqType: "模拟测试",
-        qType: ["模拟测试"],
-      },
-      // 完成进度
-      doneData: {
-        hasDone: 0,
-        has: 300,
-      },
       showDialog: false,
-      itemAs: [],
-      subject: [], //格式化后的保存题目数组
+      itemAs: [{ option: "A", ans: "测试A选项正确答案" }],
     };
   },
   components: {
     itemSheet,
-  },
-  methods: {
-    getqItem() {
-      getQsAll().then((data) => {
-        data.sort((_) => {
-          return 0.5 - Math.random();
-        });
-        for (let i = 0; i < this.doneData.has; i++) {
-          this.itemAs.push(data[Math.floor(Math.random() * data.length)]);
-          let ob = {};
-          let items = Object.keys(this.itemAs[i])
-            .join(" ")
-            .match(/[a-z]+/gi); //获取选项[A-Z]
-          for (let it of items) {
-            ob[it] = this.itemAs[i][it];
-          }
-          this.subject.push(ob);
-        }
-        //console.log(this.itemAs);
-        // console.log(this.subject);
-      });
-    },
-  },
-  mounted() {
-    // 获取题型下的题目每次50条
-    this.getqItem();
   },
 };
 </script>
