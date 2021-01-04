@@ -9,6 +9,7 @@ function setErrQs(id , dt){
             username:dt.username,
             pwd:dt.pwd,
             avaurl:dt.avaurl,
+            coverurl:dt.coverurl,
             area: dt.area,
             introduce: dt.introduce,
             oneWord: dt.oneWord,

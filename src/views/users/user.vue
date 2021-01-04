@@ -13,7 +13,7 @@
           :class="i % 2 == 0 ? 'odd' : 'even'"
         >
           <a
-            :href="'/user/' + v.id"
+            @click="toUserinfo(v.id)"
             class="iteminfo"
             v-ripple="{ class: `secondary--text` }"
           >
@@ -72,6 +72,9 @@ export default {
     };
   },
   methods: {
+    toUserinfo(id) {
+      this.$router.replace("/user/" + id);
+    },
     // 初始化数据
     loadMore() {
       alert(1);

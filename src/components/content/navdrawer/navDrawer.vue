@@ -114,7 +114,7 @@ export default {
             text: "个人资料",
             icon: "mdi-account",
             route: `/user/${window.localStorage.getItem("uid")}`,
-            isShow: this.$store.state.loginStatus.userName ? true : false,
+            isShow: this.$store.state.loginStatus.userName != "" ? true : false,
           },
           {
             text: "人脉",
@@ -148,6 +148,18 @@ export default {
   methods: {
     changeGroupItem(index) {},
     changeSubItem() {},
+  },
+  watch: {
+    "$store.state.loginStatus.userName": function (val) {
+      val == ""
+        ? (this.items.userItem[0].isShow = false)
+        : ((this.items.userItem[0].isShow = true),
+          (this.items.userItem[0].route = `/user/${window.localStorage.getItem(
+            "uid"
+          )}`));
+      //console.log(this.items.userItem[0]);
+    },
+    //deep: true,
   },
 };
 </script>

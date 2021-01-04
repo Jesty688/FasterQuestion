@@ -4,12 +4,15 @@
       "username": "Jesty",
       "pwd": "fq8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92scjs",
       "avaurl": "https://q1.qlogo.cn/g?b=qq&nk=1980963713&src_uin=www.jlwz.cn&s=0",
-      "area": "",
-      "introduce": "",
+      "coverurl": "https://cdn.w3cbus.com/community.mdclub.org/static/default/user_cover_large.webp",
+      "area": "江西",
+      "introduce": "测试可以保存很多字的个人简介",
       "oneWord": "唔...我们一定会在月亮上相遇!🌕",
-      "school": "",
-      "userHome": "",
-      "fllow": [],
+      "school": "理工",
+      "userHome": "http://jesty.ahy1.top",
+      "fllow": [
+        2
+      ],
       "errCollect": [
         [
           {
@@ -37,6 +40,17 @@
             "curanstitle": 1
           },
           1609664867000
+        ],
+        [
+          {
+            "ans": "B",
+            "curans": "C",
+            "title": "测试题库2",
+            "qid": 5001,
+            "anstitle": 9,
+            "curanstitle": 10
+          },
+          1609765364000
         ]
       ],
       "id": 1
@@ -45,14 +59,13 @@
       "username": "zhenhang",
       "pwd": "fq8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92scjs",
       "avaurl": "https://imgavater.ui.cn/avatar/max.png",
+      "coverurl": "https://cdn.w3cbus.com/community.mdclub.org/static/default/user_cover_large.webp",
       "area": "",
       "introduce": "",
       "oneWord": "思Hua~🌼",
       "school": "",
       "userHome": "",
-      "fllow": [
-        1
-      ],
+      "fllow": [],
       "errCollect": [],
       "id": 2
     }
